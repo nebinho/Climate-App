@@ -568,13 +568,18 @@ namespace klimatapp.Repositories
 
         public Observation AddObservationWithMultipleValues(Observation observation, Measurement measurement, Category category, Unit unit)
         {
-            string statement = "INSERT INTO observation(observerid, geolocationid, date) VALUES (@observerid, @geolocationid, @date) RETURNING id";
+            string statement1 = "INSERT INTO observation(observerid, geolocationid, date) VALUES (@observerid, @geolocationid, @date) RETURNING id";
+            string statement2 = "INSERT INTO measurement(value, observationid, categoryid) VALUES (@value, @observationid, @categoryid) RETURNING id";
+            string statement3 = "INSERT INTO unit(type, abbreviation) VALUES (@type, @abbreviation) RETURNING id";
+
+            using var connection = new NpgsqlConnection(connectionString);
+            connection.Open();
+
+            var transaction = connection.BeginTransaction();
+
             try
             {
-                using var connection = new NpgsqlConnection(connectionString);
-                connection.Open();
-                using var command = new NpgsqlCommand(statement, connection);
-
+                using var command = new NpgsqlCommand(statement1, connection);
                 command.Parameters.AddWithValue("observerid", observation.ObserverId);
                 command.Parameters.AddWithValue("geolocationid", observation.GeolocationId);
                 command.Parameters.AddWithValue("date", observation.Date);
