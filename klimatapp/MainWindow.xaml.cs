@@ -41,6 +41,30 @@ namespace klimatapp
             //lstTest.ItemsSource = areas;
 
             //MessageBox.Show(area.Name);
+            //try
+            //{
+            //    var observer = db.GetObserver(1);
+            //    var observers = db.GetObservers();
+
+
+            //    observer = new Observer
+            //    {
+            //        FirstName = "Kiddi",
+            //        //LastName = "Kidd"
+            //    };
+
+            //    observer = db.AddObserver(observer);
+
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show(ex.Message);
+            //}
+
+        }
+
+        private void btnAddObserver_Click(object sender, RoutedEventArgs e)
+        {
             try
             {
                 var observer = db.GetObserver(1);
@@ -61,15 +85,19 @@ namespace klimatapp
                 MessageBox.Show(ex.Message);
             }
 
+
+
         }
 
 
+        //    private void UpdateUI()
+        //    {
+        //        var observers = db.GetObservers();
+        //        lstTest.ItemsSource = null;
+        //        lstTest.ItemsSource = observers;
+        //    }
 
-    //    private void UpdateUI()
-    //    {
-    //        var observers = db.GetObservers();
-    //        lstTest.ItemsSource = null;
-    //        lstTest.ItemsSource = observers;
-    //    }
+
+
     }
 }

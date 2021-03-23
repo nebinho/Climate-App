@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
   <Grid>
-    <ListBox x:Name="lbObservation" HorizontalAlignment="Left" Height="279" Margin="358,41,0,0" VerticalAlignment="Top" Width="152"/>
+    <ListBox x:Name="lbObservation" HorizontalAlignment="Left" Height="279" Margin="358,41,0,0" VerticalAlignment="Top" Width="152" SelectionChanged="lbObservation_SelectionChanged"/>
     <Label x:Name="lblFirstName"  Content="First Name" HorizontalAlignment="Left" Margin="9,316,0,0" VerticalAlignment="Top"/>
     <Label x:Name="lblLastName" Content="Last Name" HorizontalAlignment="Left" Margin="150,316,0,0" VerticalAlignment="Top"/>
     <TextBox x:Name="txbFirstName" HorizontalAlignment="Left" Margin="9,347,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
@@ -16,7 +16,7 @@
     <Label x:Name="lblObserver" Content="Observer" HorizontalAlignment="Left" Margin="11,10,0,0" VerticalAlignment="Top"/>
     <Label x:Name="lblObservation" Content="Observation" HorizontalAlignment="Left" Margin="358,10,0,0" VerticalAlignment="Top"/>
     <Button x:Name="btnObservation" Content="Observations" HorizontalAlignment="Left" Margin="207,291,0,0" VerticalAlignment="Top"/>
-    <Button x:Name="btnAddObserver" Content="Add Observer" HorizontalAlignment="Left" Margin="9,381,0,0" VerticalAlignment="Top"/>
+    <Button x:Name="btnAddObserver" Content="Add Observer" HorizontalAlignment="Left" Margin="9,381,0,0" VerticalAlignment="Top" Click="btnAddObserver_Click"/>
     <Button x:Name="btnViewObservers" Content="View Observers" HorizontalAlignment="Left" Margin="97,381,0,0" VerticalAlignment="Top"/>
     <Button x:Name="btnDeleteObserver" Content="Delete Observer" HorizontalAlignment="Left" Margin="199,381,0,0" VerticalAlignment="Top"/>
     <ComboBox x:Name="cmbCountry" HorizontalAlignment="Left" Margin="184,71,0,0" VerticalAlignment="Top" Width="120"/>
