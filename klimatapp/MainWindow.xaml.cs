@@ -93,13 +93,33 @@ namespace klimatapp
             try
             {
                 observer = db.GetObserver((Observer)lbObserver.SelectedItem);
-                lbObservation.UpdateLayout();
+                
                 lbObservation.ItemsSource = db.GetObservations(observer);
+                lbObservation.UpdateLayout();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        private void cmbFur_DropDownOpened(object sender, EventArgs e)
+        {
+            if (cmbAnimals.SelectedItem.ToString() == "brown bear")
+            {
+                cmbFur.ItemsSource = db.GetFurs(4);
+            }
+            else if (cmbAnimals.SelectedItem.ToString() == "wolf")
+            {
+                cmbFur.ItemsSource = db.GetFurs(4);
+            }
+            else if (cmbAnimals.SelectedItem.ToString() == "fox")
+            {
+                cmbFur.ItemsSource = db.GetFurs(4);
+            }
+            else
+                cmbFur.ItemsSource = "";
+            cmbFur.UpdateLayout();
         }
 
 

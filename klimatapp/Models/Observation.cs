@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Globalization;
 
 namespace klimatapp.Models
 {
@@ -25,9 +26,10 @@ namespace klimatapp.Models
         /// Foreign key from geolocation
         /// </summary>
         public int GeolocationId { get; set; }
+
         public override string ToString()
         {
-            return $"{Date}";
+            return Date.ToString("yyyy/MM/dd");
         }
     }
 }

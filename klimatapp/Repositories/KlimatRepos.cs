@@ -361,7 +361,7 @@ namespace klimatapp.Repositories
                 observation = new Observation
                 {
                     Id = (int)reader["id"],
-                    Date = (string)reader["date"],
+                    Date = reader.GetFieldValue<DateTime>(reader.GetOrdinal("date")),
                     ObserverId = (int)reader["observer_id"],
                     GeolocationId = (int)reader["geolocation_id"]
                 };
@@ -388,7 +388,7 @@ namespace klimatapp.Repositories
                 observation = new Observation
                 {
                     //Id = (int)reader["id"],
-                    Date = (DateTime).Rows[0]["date"],
+                    Date = reader.GetFieldValue<DateTime>(reader.GetOrdinal("date"))
                     //ObserverId = (int)reader["observer_id"],
                     //GeolocationId = (int)reader["geolocation_id"]
                 };
@@ -480,6 +480,31 @@ namespace klimatapp.Repositories
             }
             return observers;
         }
+
+        public List<Category> GetFurs(int animal)
+        {
+            string statement = $"select * from category WHERE basecategory_id = {animal}";
+            using var connection = new NpgsqlConnection(connectionString);
+            connection.Open();
+            using var command = new NpgsqlCommand(statement, connection);
+
+            using var reader = command.ExecuteReader();
+            Category category = null;
+            var categories = new List<Category>();
+            while (reader.Read())
+            {
+                category = new Category
+                {
+                    Id = (int)reader["id"],
+                    Name = (string)reader["name"],
+                    Basecategory_id = Convert.IsDBNull(reader["basecategory_id"]) ? null : (int?)reader["basecategory_id"],
+                    Unit_id = Convert.IsDBNull(reader["unit_id"]) ? null : (int?)reader["unit_id"]
+                };
+                categories.Add(category);
+            }
+            return categories;
+        }
+
         #endregion
 
         #region Create
