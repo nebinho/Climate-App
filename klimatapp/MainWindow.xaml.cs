@@ -95,13 +95,18 @@ namespace klimatapp
         private void cmbAnimals_DropDownOpened(object sender, EventArgs e)
         {
             cmbAnimals.UpdateLayout();
-            cmbAnimals.ItemsSource = db.GetSpecificAnimal();
+            cmbAnimals.ItemsSource = db.GetCategories();
         }
 
-        private void btnObservation_Click(object sender, RoutedEventArgs e)
+        //private void btnObservation_Click(object sender, RoutedEventArgs e)
+        //{
+        //    lbObservation.UpdateLayout();
+        //    lbObservation.ItemsSource = (System.Collections.IEnumerable)db.GetCategory(cmbCategory.SelectedItem.ToString());
+        //}
+
+        private void btnDeleteObserver_Click(object sender, RoutedEventArgs e)
         {
-            lbObservation.UpdateLayout();
-            lbObservation.ItemsSource = (System.Collections.IEnumerable)db.GetCategory(cmbCategory.SelectedItem.ToString());
+
         }
 
 

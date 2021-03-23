@@ -8,7 +8,7 @@ namespace klimatapp.Repositories
 {
     public class KlimatRepos
     {
-        private static readonly string connectionString = "Server=localhost;Port=5432;Database=Klimatobservationer;User ID=yoda;Password=force;";
+        private static readonly string connectionString = "Server=localhost;Port=5432;Database=klimatapp;User ID=postgres;Password=ct9k5mVZ;";
 
         #region READ
         /// <summary>
@@ -202,32 +202,33 @@ namespace klimatapp.Repositories
             return category;
         }
 
-        ///// <summary>
-        ///// Gets list of categories
-        ///// </summary>
-        ///// <returns>categories</returns>
-        //public List<Category> GetCategories()
-        //{
-        //    string statement = "select * from category";
-        //    using var connection = new NpgsqlConnection(connectionString);
-        //    connection.Open();
-        //    using var command = new NpgsqlCommand(statement, connection);
+        /// <summary>
+        /// Gets list of categories
+        /// </summary>
+        /// <returns>categories</returns>
+        public List<Category> GetCategories()
+        {
+            string statement = "select * from category WHERE basecategory_id BETWEEN 6 AND 8 ORDER BY name";
+            using var connection = new NpgsqlConnection(connectionString);
+            connection.Open();
+            using var command = new NpgsqlCommand(statement, connection);
 
-        //    using var reader = command.ExecuteReader();
-        //    Category category = null;
-        //    var categories = new List<Category>();
-        //    while (reader.Read())
-        //    {
-        //        category = new Category
-        //        {
-        //            Id = (int)reader["id"],
-        //            Name = (string)reader["name"],
-        //            Basecategory_id = Convert.IsDBNull(reader["basecategory_id"]) ? null : (int?)reader["basecategory_id"],
-        //            Unit_id = Convert.IsDBNull(reader["unit_id"]) ? null : (int?)reader["unit_id"]
-        //        };
-        //    }
-        //    return categories;
-        //}
+            using var reader = command.ExecuteReader();
+            Category category = null;
+            var categories = new List<Category>();
+            while (reader.Read())
+            {
+                category = new Category
+                {
+                    Id = (int)reader["id"],
+                    Name = (string)reader["name"],
+                    Basecategory_id = Convert.IsDBNull(reader["basecategory_id"]) ? null : (int?)reader["basecategory_id"],
+                    Unit_id = Convert.IsDBNull(reader["unit_id"]) ? null : (int?)reader["unit_id"]
+                };
+                categories.Add(category);
+            }
+            return categories;
+        }
 
         /// <summary>
         /// Gets unit from db
@@ -472,6 +473,7 @@ namespace klimatapp.Repositories
                     FirstName = (string)reader["firstname"],
                     LastName = (string)reader["lastname"]
                 };
+                observers.Add(observer);
             }
             return observers;
         }
@@ -497,6 +499,7 @@ namespace klimatapp.Repositories
                     observer.Id = (int)reader["id"];
                     observer.LastName = (string)reader["lastname"];
                 }
+                
                 return observer;
             }
             catch (PostgresException ex)
