@@ -16,7 +16,7 @@ namespace klimatapp.Models
         /// <summary>
         /// Date of made observation
         /// </summary>
-        public string Date { get; set; }
+        public DateTime Date { get; set; }
         /// <summary>
         /// Foreign key from observer
         /// </summary>
@@ -25,6 +25,9 @@ namespace klimatapp.Models
         /// Foreign key from geolocation
         /// </summary>
         public int GeolocationId { get; set; }
-
+        public override string ToString()
+        {
+            return $"{Date}";
+        }
     }
 }

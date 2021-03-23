@@ -8,7 +8,7 @@ namespace klimatapp.Repositories
 {
     public class KlimatRepos
     {
-        private static readonly string connectionString = "Server=localhost;Port=5432;Database=Klimatobservationer;User ID=yoda;Password=force;";
+        private static readonly string connectionString = "Server=localhost;Port=5432;Database=klimatapp;User ID=postgres;Password=ct9k5mVZ;";
 
         #region READ
         /// <summary>
@@ -202,32 +202,33 @@ namespace klimatapp.Repositories
             return category;
         }
 
-        ///// <summary>
-        ///// Gets list of categories
-        ///// </summary>
-        ///// <returns>categories</returns>
-        //public List<Category> GetCategories()
-        //{
-        //    string statement = "select * from category";
-        //    using var connection = new NpgsqlConnection(connectionString);
-        //    connection.Open();
-        //    using var command = new NpgsqlCommand(statement, connection);
+        /// <summary>
+        /// Gets list of categories
+        /// </summary>
+        /// <returns>categories</returns>
+        public List<Category> GetCategories()
+        {
+            string statement = "select * from category WHERE basecategory_id BETWEEN 6 AND 8 ORDER BY name";
+            using var connection = new NpgsqlConnection(connectionString);
+            connection.Open();
+            using var command = new NpgsqlCommand(statement, connection);
 
-        //    using var reader = command.ExecuteReader();
-        //    Category category = null;
-        //    var categories = new List<Category>();
-        //    while (reader.Read())
-        //    {
-        //        category = new Category
-        //        {
-        //            Id = (int)reader["id"],
-        //            Name = (string)reader["name"],
-        //            Basecategory_id = Convert.IsDBNull(reader["basecategory_id"]) ? null : (int?)reader["basecategory_id"],
-        //            Unit_id = Convert.IsDBNull(reader["unit_id"]) ? null : (int?)reader["unit_id"]
-        //        };
-        //    }
-        //    return categories;
-        //}
+            using var reader = command.ExecuteReader();
+            Category category = null;
+            var categories = new List<Category>();
+            while (reader.Read())
+            {
+                category = new Category
+                {
+                    Id = (int)reader["id"],
+                    Name = (string)reader["name"],
+                    Basecategory_id = Convert.IsDBNull(reader["basecategory_id"]) ? null : (int?)reader["basecategory_id"],
+                    Unit_id = Convert.IsDBNull(reader["unit_id"]) ? null : (int?)reader["unit_id"]
+                };
+                categories.Add(category);
+            }
+            return categories;
+        }
 
         /// <summary>
         /// Gets unit from db
@@ -288,14 +289,15 @@ namespace klimatapp.Repositories
         /// </summary>
         /// <param name="id"></param>
         /// <returns>observer</returns>
-        public Observer GetObserver(int id)
+        public Observer GetObserver(Observer obs)
         {
-            string statement = "select * from observer where id = @id";
+            //var lname = name.Substring(name.LastIndexOf(' ') + 1);
+            string statement = $"select id from observer where lastname = '{obs.LastName}'";
             using var connection = new NpgsqlConnection(connectionString);
             connection.Open();
             using var command = new NpgsqlCommand(statement, connection);
 
-            command.Parameters.AddWithValue("id", id);
+            //command.Parameters.AddWithValue("id", id);
 
             using var reader = command.ExecuteReader();
             Observer observer = null;
@@ -304,9 +306,10 @@ namespace klimatapp.Repositories
                 observer = new Observer
                 {
                     Id = (int)reader["id"],
-                    FirstName = (string)reader["firstname"],
-                    LastName = (string)reader["lastname"]
+                    //FirstName = (string)reader["firstname"],
+                    //LastName = (string)reader["lastname"]
                 };
+
             }
             return observer;
         }
@@ -370,9 +373,9 @@ namespace klimatapp.Repositories
         /// Gets list of observations
         /// </summary>
         /// <returns>observations</returns>
-        public List<Observation> GetObservations()
+        public List<Observation> GetObservations(Observer observer)
         {
-            string statement = "select * from observation";
+            string statement = $"select date from observation WHERE observer_id = {observer.Id}";
             using var connection = new NpgsqlConnection(connectionString);
             connection.Open();
             using var command = new NpgsqlCommand(statement, connection);
@@ -384,11 +387,12 @@ namespace klimatapp.Repositories
             {
                 observation = new Observation
                 {
-                    Id = (int)reader["id"],
-                    Date = (string)reader["date"],
-                    ObserverId = (int)reader["observer_id"],
-                    GeolocationId = (int)reader["geolocation_id"]
+                    //Id = (int)reader["id"],
+                    Date = (DateTime).Rows[0]["date"],
+                    //ObserverId = (int)reader["observer_id"],
+                    //GeolocationId = (int)reader["geolocation_id"]
                 };
+                observations.Add(observation);
             }
             return observations;
         }
@@ -455,7 +459,7 @@ namespace klimatapp.Repositories
         /// <returns>observers</returns>
         public List<Observer> GetObserversByLastName()
         {
-            string statement = "SELECT firstname, lastname FROM observer ORDER BY lastname";
+            string statement = $"SELECT firstname, lastname FROM observer ORDER BY lastname";
 
 
             using var connection = new NpgsqlConnection(connectionString);
@@ -472,6 +476,7 @@ namespace klimatapp.Repositories
                     FirstName = (string)reader["firstname"],
                     LastName = (string)reader["lastname"]
                 };
+                observers.Add(observer);
             }
             return observers;
         }
@@ -497,6 +502,7 @@ namespace klimatapp.Repositories
                     observer.Id = (int)reader["id"];
                     observer.LastName = (string)reader["lastname"];
                 }
+                
                 return observer;
             }
             catch (PostgresException ex)
@@ -580,16 +586,21 @@ namespace klimatapp.Repositories
 
         public int DeleteObserver(Observer observer)
         {
-            string statement = "DELETE FROM observer WHERE observer = @id";
+            //var pos = name.IndexOf(' ');
+            //var fname = name.Substring(0, pos);
+            //var lname = name.Substring(name.LastIndexOf(' ') + 1);
+            string statement = $"DELETE FROM observer WHERE lastname = @lastname";
 
             try
             {
                 using var connection = new NpgsqlConnection(connectionString);
                 connection.Open();
                 using var command = new NpgsqlCommand(statement, connection);
-                command.Parameters.AddWithValue("id", observer.Id);
+                command.Parameters.AddWithValue("lastname", observer.LastName);
+                command.Parameters.AddWithValue("firstname", observer.FirstName);
 
                 return command.ExecuteNonQuery();
+               
             }
             catch (PostgresException ex)
             {

@@ -18,7 +18,7 @@
         <Button x:Name="btnObservation" Content="Observations" HorizontalAlignment="Left" Margin="227,154,0,0" VerticalAlignment="Top" Click="btnObservation_Click"/>
         <Button x:Name="btnAddObserver" Content="Add Observer" HorizontalAlignment="Left" Margin="9,381,0,0" VerticalAlignment="Top" Click="btnAddObserver_Click"/>
         <Button x:Name="btnViewObservers" Content="View Observers" HorizontalAlignment="Left" Margin="97,381,0,0" VerticalAlignment="Top" Click="btnViewObservers_Click"/>
-        <Button x:Name="btnDeleteObserver" Content="Delete Observer" HorizontalAlignment="Left" Margin="199,381,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="btnDeleteObserver" Content="Delete Observer" HorizontalAlignment="Left" Margin="199,381,0,0" VerticalAlignment="Top" Click="btnDeleteObserver_Click"/>
         <TextBox x:Name="txbWind" HorizontalAlignment="Left" Margin="482,64,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="50" Height="16"/>
         <Label x:Name="lblWindMeasurement" Content="m/s" HorizontalAlignment="Left" Margin="537,59,0,0" VerticalAlignment="Top" Width="29"/>
         <CheckBox x:Name="IsWind" Content="" HorizontalAlignment="Left" Margin="571,65,0,0" VerticalAlignment="Top"/>

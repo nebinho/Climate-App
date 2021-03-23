@@ -29,7 +29,7 @@ namespace klimatapp
     {
         KlimatRepos db = new KlimatRepos();
         Country country = new Country();
-        
+        Observer observer = new Observer();
 
         public MainWindow()
         {
@@ -40,37 +40,6 @@ namespace klimatapp
 
         }
 
-        private void testBtn_Click(object sender, RoutedEventArgs e)
-        {
-            //string test = testBox.Text;
-
-            //var areas = db.GetAreas();
-
-            //lstTest.ItemsSource = null;
-            //lstTest.ItemsSource = areas;
-
-            //MessageBox.Show(area.Name);
-            try
-            {
-                var observer = db.GetObserver(1);
-                var observers = db.GetObservers();
-
-
-                observer = new Observer
-                {
-                    FirstName = "Kiddi",
-                    //LastName = "Kidd"
-                };
-
-                observer = db.AddObserver(observer);
-
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-
-        }
 
         private void btnAddObserver_Click(object sender, RoutedEventArgs e)
         {
@@ -95,13 +64,42 @@ namespace klimatapp
         private void cmbAnimals_DropDownOpened(object sender, EventArgs e)
         {
             cmbAnimals.UpdateLayout();
-            cmbAnimals.ItemsSource = db.GetSpecificAnimal();
+            cmbAnimals.ItemsSource = db.GetCategories();
+        }
+
+        //private void btnObservation_Click(object sender, RoutedEventArgs e)
+        //{
+        //    lbObservation.UpdateLayout();
+        //    lbObservation.ItemsSource = (System.Collections.IEnumerable)db.GetCategory(cmbCategory.SelectedItem.ToString());
+        //}
+
+        private void btnDeleteObserver_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                observer = (Observer)lbObserver.SelectedItem;
+                db.DeleteObserver(observer);
+                lbObserver.UpdateLayout();
+                lbObserver.ItemsSource = db.GetObserversByLastName();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void btnObservation_Click(object sender, RoutedEventArgs e)
         {
-            lbObservation.UpdateLayout();
-            lbObservation.ItemsSource = (System.Collections.IEnumerable)db.GetCategory(cmbCategory.SelectedItem.ToString());
+            try
+            {
+                observer = db.GetObserver((Observer)lbObserver.SelectedItem);
+                lbObservation.UpdateLayout();
+                lbObservation.ItemsSource = db.GetObservations(observer);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
 
