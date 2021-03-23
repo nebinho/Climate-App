@@ -3,14 +3,12 @@ using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Data;
-using System.Windows.Controls;
 
 namespace klimatapp.Repositories
 {
     public class KlimatRepos
     {
-        private static readonly string connectionString = "Server=localhost;Port=5432;Database=klimatapp;User ID=postgres;Password=ct9k5mVZ";
+        private static readonly string connectionString = "Server=localhost;Port=5432;Database=Klimatobservationer;User ID=yoda;Password=force;";
 
         #region READ
         /// <summary>
@@ -41,32 +39,31 @@ namespace klimatapp.Repositories
             return area;
         }
 
-        /// <summary>
-        /// Gets a list of areas from db
-        /// </summary>
-        /// <returns>areas</returns>
-        public List<Area> GetAreas()
-        {
-            string statement = "select * from area";
-            using var connection = new NpgsqlConnection(connectionString);
-            connection.Open();
-            using var command = new NpgsqlCommand(statement, connection);
+        ///// <summary>
+        ///// Gets a list of areas from db
+        ///// </summary>
+        ///// <returns>areas</returns>
+        //public List<Area> GetAreas()
+        //{
+        //    string statement = "select * from area";
+        //    using var connection = new NpgsqlConnection(connectionString);
+        //    connection.Open();
+        //    using var command = new NpgsqlCommand(statement, connection);
 
-            using var reader = command.ExecuteReader();
-            Area area = null;
-            var areas = new List<Area>();
-            while (reader.Read())
-            {
-                area = new Area
-                {
-                    Id = (int)reader["id"],
-                    Name = (string)reader["name"],
-                    CountryId = (int)reader["country_id"]
-                };
-                areas.Add(area);
-            }
-            return areas;
-        }
+        //    using var reader = command.ExecuteReader();
+        //    Area area = null;
+        //    var areas = new List<Area>();
+        //    while (reader.Read())
+        //    {
+        //        area = new Area
+        //        {
+        //            Id = (int)reader["id"],
+        //            Name = (string)reader["name"],
+        //            CountryId = (int)reader["country_id"]
+        //        };
+        //    }
+        //    return areas;
+        //}
 
         /// <summary>
         /// Gets country from db
@@ -95,31 +92,30 @@ namespace klimatapp.Repositories
             return country;
         }
 
-        /// <summary>
-        /// Gets list of countries
-        /// </summary>
-        /// <returns>countries</returns>
-        public List<Country> GetCountries()
-        {
-            string statement = "select * from country";
-            using var connection = new NpgsqlConnection(connectionString);
-            connection.Open();
-            using var command = new NpgsqlCommand(statement, connection);
+        ///// <summary>
+        ///// Gets list of countries
+        ///// </summary>
+        ///// <returns>countries</returns>
+        //public List<Country> GetCountries()
+        //{
+        //    string statement = "select * from country";
+        //    using var connection = new NpgsqlConnection(connectionString);
+        //    connection.Open();
+        //    using var command = new NpgsqlCommand(statement, connection);
 
-            using var reader = command.ExecuteReader();
-            Country country = null;
-            var countries = new List<Country>();
-            while (reader.Read())
-            {
-                country = new Country
-                {
-                    Id = (int)reader["id"],
-                    Name = (string)reader["name"]
-                };
-                countries.Add(country);
-            }
-            return countries;
-        }
+        //    using var reader = command.ExecuteReader();
+        //    Country country = null;
+        //    var countries = new List<Country>();
+        //    while (reader.Read())
+        //    {
+        //        country = new Country
+        //        {
+        //            Id = (int)reader["id"],
+        //            Name = (string)reader["name"]
+        //        };
+        //    }
+        //    return countries;
+        //}
 
         /// <summary>
         /// Gets information about measurements in db
@@ -150,32 +146,32 @@ namespace klimatapp.Repositories
             return measurement;
         }
 
-        /// <summary>
-        /// Gets list of measurements
-        /// </summary>
-        /// <returns>measurements</returns>
-        public List<Measurement> GetMeasurements()
-        {
-            string statement = "select * from measurement";
-            using var connection = new NpgsqlConnection(connectionString);
-            connection.Open();
-            using var command = new NpgsqlCommand(statement, connection);
+        ///// <summary>
+        ///// Gets list of measurements
+        ///// </summary>
+        ///// <returns>measurements</returns>
+        //public List<Measurement> GetMeasurements()
+        //{
+        //    string statement = "select * from measurement";
+        //    using var connection = new NpgsqlConnection(connectionString);
+        //    connection.Open();
+        //    using var command = new NpgsqlCommand(statement, connection);
 
-            using var reader = command.ExecuteReader();
-            Measurement measurement = null;
-            var measurements = new List<Measurement>();
-            while (reader.Read())
-            {
-                measurement = new Measurement
-                {
-                    Id = (int)reader["id"],
-                    Value = Convert.IsDBNull(reader["value"]) ? null : (float?)reader["value"],
-                    Observation_id = (int)reader["observation_id"],
-                    Category_id = (int)reader["category_id"]
-                };
-            }
-            return measurements;
-        }
+        //    using var reader = command.ExecuteReader();
+        //    Measurement measurement = null;
+        //    var measurements = new List<Measurement>();
+        //    while (reader.Read())
+        //    {
+        //        measurement = new Measurement
+        //        {
+        //            Id = (int)reader["id"],
+        //            Value = Convert.IsDBNull(reader["value"]) ? null : (float?)reader["value"],
+        //            Observation_id = (int)reader["observation_id"],
+        //            Category_id = (int)reader["category_id"]
+        //        };
+        //    }
+        //    return measurements;
+        //}
 
         /// <summary>
         /// Gets category from db
@@ -205,83 +201,33 @@ namespace klimatapp.Repositories
             }
             return category;
         }
-        public int FindId(string name)
-        {
-            string statement = $"select id from category where name @name";
-            using var connection = new NpgsqlConnection(connectionString);
-            connection.Open();
-            using var command = new NpgsqlCommand(statement, connection);
 
-            command.Parameters.AddWithValue("name", name);
+        ///// <summary>
+        ///// Gets list of categories
+        ///// </summary>
+        ///// <returns>categories</returns>
+        //public List<Category> GetCategories()
+        //{
+        //    string statement = "select * from category";
+        //    using var connection = new NpgsqlConnection(connectionString);
+        //    connection.Open();
+        //    using var command = new NpgsqlCommand(statement, connection);
 
-            using var reader = command.ExecuteReader();
-            Category category = null;
-            while (reader.Read())
-            {
-                category = new Category
-                {
-                    Id = (int)reader["id"],
-                    Name = (string)reader["name"],
-                    Basecategory_id = Convert.IsDBNull(reader["basecategory_id"]) ? null : (int?)reader["basecategory_id"],
-                    Unit_id = Convert.IsDBNull(reader["unit_id"]) ? null : (int?)reader["unit_id"]
-                };
-            }
-            return int id;
-        }
-        /// <summary>
-        /// Gets list of categories
-        /// </summary>
-        /// <returns>categories</returns>
-        public List<Category> GetCategories()
-        {
-            string statement = "select * from category ORDER BY basecategory_id ASC, name";
-            using var connection = new NpgsqlConnection(connectionString);
-            connection.Open();
-            using var command = new NpgsqlCommand(statement, connection);
-
-            using var reader = command.ExecuteReader();
-            Category category = null;
-            var categories = new List<Category>();
-            while (reader.Read())
-            {
-                category = new Category
-                {
-                    Id = (int)reader["id"],
-                    Name = (string)reader["name"],
-                    Basecategory_id = Convert.IsDBNull(reader["basecategory_id"]) ? null : (int?)reader["basecategory_id"],
-                    Unit_id = Convert.IsDBNull(reader["unit_id"]) ? null : (int?)reader["unit_id"]
-                };
-                categories.Add(category);
-            }
-            return categories;
-        }
-        /// <summary>
-        /// Gets list of categories
-        /// </summary>
-        /// <returns>categories</returns>
-        public List<Category> GetSpecificAnimal()
-        {
-            string statement = "select * from category WHERE basecategory_id BETWEEN 6 AND 8 ORDER BY basecategory_id ASC, name";
-            using var connection = new NpgsqlConnection(connectionString);
-            connection.Open();
-            using var command = new NpgsqlCommand(statement, connection);
-
-            using var reader = command.ExecuteReader();
-            Category category = null;
-            var categories = new List<Category>();
-            while (reader.Read())
-            {
-                category = new Category
-                {
-                    Id = (int)reader["id"],
-                    Name = (string)reader["name"],
-                    Basecategory_id = Convert.IsDBNull(reader["basecategory_id"]) ? null : (int?)reader["basecategory_id"],
-                    Unit_id = Convert.IsDBNull(reader["unit_id"]) ? null : (int?)reader["unit_id"]
-                };
-                categories.Add(category);
-            }
-            return categories;
-        }
+        //    using var reader = command.ExecuteReader();
+        //    Category category = null;
+        //    var categories = new List<Category>();
+        //    while (reader.Read())
+        //    {
+        //        category = new Category
+        //        {
+        //            Id = (int)reader["id"],
+        //            Name = (string)reader["name"],
+        //            Basecategory_id = Convert.IsDBNull(reader["basecategory_id"]) ? null : (int?)reader["basecategory_id"],
+        //            Unit_id = Convert.IsDBNull(reader["unit_id"]) ? null : (int?)reader["unit_id"]
+        //        };
+        //    }
+        //    return categories;
+        //}
 
         /// <summary>
         /// Gets unit from db
@@ -311,31 +257,31 @@ namespace klimatapp.Repositories
             return unit;
         }
 
-        /// <summary>
-        /// Gets list of Units
-        /// </summary>
-        /// <returns>units</returns>
-        public List<Unit> GetUnits()
-        {
-            string statement = "select * from unit";
-            using var connection = new NpgsqlConnection(connectionString);
-            connection.Open();
-            using var command = new NpgsqlCommand(statement, connection);
+        ///// <summary>
+        ///// Gets list of Units
+        ///// </summary>
+        ///// <returns>units</returns>
+        //public List<Unit> GetUnits()
+        //{
+        //    string statement = "select * from unit";
+        //    using var connection = new NpgsqlConnection(connectionString);
+        //    connection.Open();
+        //    using var command = new NpgsqlCommand(statement, connection);
 
-            using var reader = command.ExecuteReader();
-            Unit unit = null;
-            var units = new List<Unit>();
-            while (reader.Read())
-            {
-                unit = new Unit
-                {
-                    Id = (int)reader["id"],
-                    Type = (string)reader["type"],
-                    Abbreviation = (string)reader["abbreviation"],
-                };
-            }
-            return units;
-        }
+        //    using var reader = command.ExecuteReader();
+        //    Unit unit = null;
+        //    var units = new List<Unit>();
+        //    while (reader.Read())
+        //    {
+        //        unit = new Unit
+        //        {
+        //            Id = (int)reader["id"],
+        //            Type = (string)reader["type"],
+        //            Abbreviation = (string)reader["abbreviation"],
+        //        };
+        //    }
+        //    return units;
+        //}
 
         /// <summary>
         /// Gets observer from db
@@ -476,32 +422,32 @@ namespace klimatapp.Repositories
             return geolocation;
         }
 
-        /// <summary>
-        /// Gets list of geolocations
-        /// </summary>
-        /// <returns>geolocations</returns>
-        public List<Geolocation> GetGeolocations()
-        {
-            string statement = "select * from geolocation";
-            using var connection = new NpgsqlConnection(connectionString);
-            connection.Open();
-            using var command = new NpgsqlCommand(statement, connection);
+        ///// <summary>
+        ///// Gets list of geolocations
+        ///// </summary>
+        ///// <returns>geolocations</returns>
+        //public List<Geolocation> GetGeolocations()
+        //{
+        //    string statement = "SELECT * FROM geolocation";
+        //    using var connection = new NpgsqlConnection(connectionString);
+        //    connection.Open();
+        //    using var command = new NpgsqlCommand(statement, connection);
 
-            using var reader = command.ExecuteReader();
-            Geolocation geolocation = null;
-            var geolocations = new List<Geolocation>();
-            while (reader.Read())
-            {
-                geolocation = new Geolocation
-                {
-                    Id = (int)reader["id"],
-                    Latitude = Convert.IsDBNull(reader["latitude"]) ? null : (int?)reader["latitude"],
-                    Longitude = Convert.IsDBNull(reader["longitude"]) ? null : (int?)reader["longitude"],
-                    AreaId = (int)reader["area_id"]
-                };
-            }
-            return geolocations;
-        }
+        //    using var reader = command.ExecuteReader();
+        //    Geolocation geolocation = null;
+        //    var geolocations = new List<Geolocation>();
+        //    while (reader.Read())
+        //    {
+        //        geolocation = new Geolocation
+        //        {
+        //            Id = (int)reader["id"],
+        //            Latitude = Convert.IsDBNull(reader["latitude"]) ? null : (int?)reader["latitude"],
+        //            Longitude = Convert.IsDBNull(reader["longitude"]) ? null : (int?)reader["longitude"],
+        //            AreaId = (int)reader["area_id"]
+        //        };
+        //    }
+        //    return geolocations;
+        //}
 
         /// <summary>
         /// Gets list of observers ordered by last name
@@ -509,7 +455,7 @@ namespace klimatapp.Repositories
         /// <returns>observers</returns>
         public List<Observer> GetObserversByLastName()
         {
-            string statement = "select firstname, lastname from observer ORDER BY lastname";
+            string statement = "SELECT firstname, lastname FROM observer ORDER BY lastname";
 
 
             using var connection = new NpgsqlConnection(connectionString);
@@ -524,9 +470,8 @@ namespace klimatapp.Repositories
                 observer = new Observer
                 {
                     FirstName = (string)reader["firstname"],
-                    LastName = (string)reader["lastname"],
+                    LastName = (string)reader["lastname"]
                 };
-                observers.Add(observer);
             }
             return observers;
         }
@@ -536,7 +481,7 @@ namespace klimatapp.Repositories
 
         public Observer AddObserver(Observer observer)
         {
-            string statement = "insert into observer(firstname, lastname) values(@firstname, @lastname) returning id";
+            string statement = "INSERT INTO observer(firstname, lastname) VALUES(@firstname, @lastname) RETURNING id";
             try
             {
                 using var connection = new NpgsqlConnection(connectionString);
@@ -550,22 +495,21 @@ namespace klimatapp.Repositories
                 while (reader.Read())
                 {
                     observer.Id = (int)reader["id"];
-                    //observer.LastName = (string)reader["lastname"];
+                    observer.LastName = (string)reader["lastname"];
                 }
                 return observer;
             }
             catch (PostgresException ex)
             {
                 string errorcode = ex.SqlState;
-                throw new Exception("Du, det här är fel! Skärp dig, fy fan!", ex);
+                throw new Exception("Du måste ange både förnamn och efternamn", ex);
             }
 
         }
 
         public Observation AddObservation(Observation observation)
         {
-            string statement = "insert into observeration(observerid, geolocationid, date) " +
-                "VALUES (@observerid, @geolocationid, @date) returning id";
+            string statement = "INSERT INTO observation(observerid, geolocationid, date) VALUES (@observerid, @geolocationid, @date) RETURNING id";
             try
             {
                 using var connection = new NpgsqlConnection(connectionString);
@@ -590,88 +534,69 @@ namespace klimatapp.Repositories
             }
 
         }
+
+        public Observation AddObservationWithMultipleValues(Observation observation, Measurement measurement, Category category, Unit unit)
+        {
+            string statement = "INSERT INTO observation(observerid, geolocationid, date) VALUES (@observerid, @geolocationid, @date) RETURNING id";
+            try
+            {
+                using var connection = new NpgsqlConnection(connectionString);
+                connection.Open();
+                using var command = new NpgsqlCommand(statement, connection);
+
+                command.Parameters.AddWithValue("observerid", observation.ObserverId);
+                command.Parameters.AddWithValue("geolocationid", observation.GeolocationId);
+                command.Parameters.AddWithValue("date", observation.Date);
+                using var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    observation.Id = (int)reader["id"];
+
+                }
+                return observation;
+            }
+            catch (PostgresException ex)
+            {
+                string errorcode = ex.SqlState;
+                throw new Exception("Du, det här är fel! Skärp dig, för helvete!");
+            }
+
+        }
+
         #endregion
 
-        //public Observer DeleteObserver(Observer observer)
-        //{
-        //    string statement = "Delete from observer where firstname='@firstname', lastname='@lastname'";
-        //    try
-        //    {
-        //        using var connection = new NpgsqlConnection(connectionString);
-        //        connection.Open();
-        //        using var command = new NpgsqlCommand(statement, connection);
-        //        command.Parameters.RemoveAt()
-        //        command.Parameters.RemoveAt("firstname", observer.FirstName);
-        //        command.Parameters.RemoveAt("lastname", observer.LastName);
-        //        //command.Parameters.AddWithValue("firstname", observer.FirstName);
-        //        //command.Parameters.AddWithValue("lastname", observer.LastName);
+        #region UPDATE
 
-        //        using var reader = command.ExecuteReader();
-        //        while (reader.Read())
-        //        {
-        //            observer.Id = (int)reader["id"];
 
-        //        }
-        //        return observer;
-        //    }
-        //    catch (PostgresException ex)
-        //    {
-        //        string errorcode = ex.SqlState;
-        //        throw new Exception("Du, det här är fel! Skärp dig, fy fan!", ex);
-        //    }
 
-        //}
+        #endregion
 
         #region DELETE
 
+        public int DeleteObserver(Observer observer)
+        {
+            string statement = "DELETE FROM observer WHERE observer = @id";
+
+            try
+            {
+                using var connection = new NpgsqlConnection(connectionString);
+                connection.Open();
+                using var command = new NpgsqlCommand(statement, connection);
+                command.Parameters.AddWithValue("id", observer.Id);
+
+                return command.ExecuteNonQuery();
+            }
+            catch (PostgresException ex)
+            {
+                throw new Exception($"{observer} kunde inte raderas från databasen, eftersom observatören har registrerad/e observation/er. Markera vad du vill ska hända med dessa observationer ", ex);
+            }
+
+        }
 
         #endregion
 
-        #region UI
 
 
-
-        //fillComboBox method for filling the ComboBox with Data
-        //public string fillComboBox(ComboBox cmb, string column, string model)
-        //{
-            
-        //    string statement = $"Select {column} from {model}";
-        //    try
-        //    {
-        //        using var connection = new NpgsqlConnection(connectionString);
-        //        {
-                    
-        //            connection.Open();
-        //            using var command = new NpgsqlCommand(statement, connection);
-        //            DataSet ds = new DataSet();
-        //            //connection.Open();
-        //            //using var command = new NpgsqlCommand(statement, connection);
-        //            NpgsqlDataAdapter dataAdapter = new NpgsqlDataAdapter(statement, connection);
-                   
-        //            DataTable dt = new DataTable();
-        //            dataAdapter.Fill(dt);
-        //            using var reader = command.ExecuteReader();
-        //                    while (reader.Read())
-        //                    {
-        //                        model.Id = (int)reader["id"];
-
-        //                    }
-
-        //            //Set Displaymember as Country
-        //            //cmb.DataContext = ds.Tables[0];
-        //            //cmb.DisplayMemberPath = "country";
-        //            //Set ValueMember as ID
-        //        }
-        //    }
-        //    return 
-        //    catch (PostgresException ex)
-        //    {
-        //        string errorcode = ex.SqlState;
-        //        throw new Exception("Du, det här är fel! Skärp dig, vad håller du på med!");
-        //    }
-        //}
-        //cmb_Country_SelectedIndexChanged Event
-        #endregion
     }
 }
 
