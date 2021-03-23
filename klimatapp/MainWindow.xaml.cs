@@ -103,23 +103,12 @@ namespace klimatapp
             }
         }
 
-        private void cmbFur_DropDownOpened(object sender, EventArgs e)
+        private void btnAdd_Click(object sender, RoutedEventArgs e)
         {
-            if (cmbAnimals.SelectedItem.ToString() == "brown bear")
+            if (txbWind.Text != "")
             {
-                cmbFur.ItemsSource = db.GetFurs(4);
+                
             }
-            else if (cmbAnimals.SelectedItem.ToString() == "wolf")
-            {
-                cmbFur.ItemsSource = db.GetFurs(4);
-            }
-            else if (cmbAnimals.SelectedItem.ToString() == "fox")
-            {
-                cmbFur.ItemsSource = db.GetFurs(4);
-            }
-            else
-                cmbFur.ItemsSource = "";
-            cmbFur.UpdateLayout();
         }
 
 

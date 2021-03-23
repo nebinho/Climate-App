@@ -25,6 +25,11 @@ namespace klimatapp.Models
         /// foreign key
         /// </summary>
         public int Category_id { get; set; }
+
+        public override string ToString()
+        {
+            return $"{Value}"; 
+        }
     }
 
 }

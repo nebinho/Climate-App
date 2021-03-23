@@ -538,9 +538,11 @@ namespace klimatapp.Repositories
 
         }
 
-        public Observation AddObservation(Observation observation)
+        // Behövs datetime som indataparameter ifall man vill skriva in
+        public Observation AddObservation(Observation observation, Area area)
         {
-            string statement = "INSERT INTO observation(observerid, geolocationid, date) VALUES (@observerid, @geolocationid, @date) RETURNING id";
+            string statement = $"INSERT INTO observation(observerid, geolocationid, date) VALUES (@observerid, @geolocationid, @date) " +
+                $"SELECT geolocationid FROM geolocation WHERE areaid = {area.Id} RETURNING id";
             try
             {
                 using var connection = new NpgsqlConnection(connectionString);
@@ -554,50 +556,163 @@ namespace klimatapp.Repositories
                 while (reader.Read())
                 {
                     observation.Id = (int)reader["id"];
-
                 }
                 return observation;
             }
             catch (PostgresException ex)
             {
                 string errorcode = ex.SqlState;
-                throw new Exception("Du, det här är fel! Skärp dig, för helvete!");
+                throw new Exception("Du, det här är fel! Du måste välja område för observationen!");
+            }
+        }
+
+        public Measurement AddMeasurement(Measurement measurement, Observation observation, Category category)
+        {
+            string statement = $"INSERT INTO measurement(value, observationid, categoryid) VALUES(@value, @observationid, @categoryid) " +
+                $"SELECT observationid, categoryid FROM observation, category WHERE observationid = {observation.Id}, categoryid = {category.Id} RETURNING id";
+            try
+            {
+                using var connection = new NpgsqlConnection(connectionString);
+                connection.Open();
+                using var command = new NpgsqlCommand(statement, connection);
+
+                command.Parameters.AddWithValue("value", measurement.Value ?? Convert.DBNull);
+                command.Parameters.AddWithValue("observationid", measurement.Observation_id);
+                command.Parameters.AddWithValue("categoryid", measurement.Category_id);
+
+                using var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    measurement.Id = (int)reader["id"];
+                }
+
+                return measurement;
+            }
+            catch (PostgresException ex)
+            {
+                string errorcode = ex.SqlState;
+                throw new Exception("Du det här är fel! Du måste välja en kategori för mätpunkten!", ex);
             }
 
         }
 
-        public Observation AddObservationWithMultipleValues(Observation observation, Measurement measurement, Category category, Unit unit)
+
+        public Observation AddObservationWithMultipleValues(Observation observation, Measurement measurement, Category category, Area area)
         {
-            string statement1 = "INSERT INTO observation(observerid, geolocationid, date) VALUES (@observerid, @geolocationid, @date) RETURNING id";
-            string statement2 = "INSERT INTO measurement(value, observationid, categoryid) VALUES (@value, @observationid, @categoryid) RETURNING id";
-            string statement3 = "INSERT INTO unit(type, abbreviation) VALUES (@type, @abbreviation) RETURNING id";
+            string stmt1 = "INSERT INTO observation(observerid, geolocationid, date) VALUES (@observerid, @geolocationid, @date) RETURNING id";
+            string stmt2 = "INSERT INTO measurement(value, observationid, categoryid) VALUES (@value, @observationid, @categoryid) RETURNING id";
 
             using var connection = new NpgsqlConnection(connectionString);
             connection.Open();
 
             var transaction = connection.BeginTransaction();
 
+            using var cmd = new NpgsqlCommand(stmt1, connection);
             try
             {
-                using var command = new NpgsqlCommand(statement1, connection);
-                command.Parameters.AddWithValue("observerid", observation.ObserverId);
-                command.Parameters.AddWithValue("geolocationid", observation.GeolocationId);
-                command.Parameters.AddWithValue("date", observation.Date);
-                using var reader = command.ExecuteReader();
-                while (reader.Read())
-                {
-                    observation.Id = (int)reader["id"];
-
-                }
+                transaction.Commit();
                 return observation;
+
             }
             catch (PostgresException ex)
             {
-                string errorcode = ex.SqlState;
-                throw new Exception("Du, det här är fel! Skärp dig, för helvete!");
+                transaction.Rollback();
+                string errorCode = ex.SqlState;
+                switch (errorCode)
+                {
+                    default:
+                        break;
+                }
+
+                throw new Exception("Det gick inte att lägga till en observation", ex);
             }
 
+            using var cmd2 = new NpgsqlCommand(stmt2, connection);
+            try
+            {
+                transaction.Commit();
+                return observation;
+
+            }
+            catch (PostgresException ex)
+            {
+                transaction.Rollback();
+                string errorCode = ex.SqlState;
+                switch (errorCode)
+                {
+                    default:
+                        break;
+                }
+
+                throw new Exception("Det gick inte att lägga till en observation", ex);
+            }
+
+            //try
+            //{
+
+
+            //using (var cmd = new NpgsqlCommand())
+            //{
+            //    cmd.Connection = connection;
+            //    cmd.CommandText = "INSERT INTO observation(observerid, geolocationid, date) VALUES (@observerid, @geolocationid, @date) RETURNING id";
+            //    cmd.Parameters.AddWithValue("observerid", observation.ObserverId);
+            //    cmd.Parameters.AddWithValue("geolocationid", observation.GeolocationId);
+            //    cmd.Parameters.AddWithValue("date", observation.Date);
+            //    cmd.Parameters.AddWithValue("observationid", observation.Id);
+            //    cmd.ExecuteNonQuery();
+            //    cmd.Parameters.Clear();
+
+            //    transaction.Commit();
+            //}
+
+            //}
+            //catch (PostgresException ex)
+            //{
+            //    transaction.Rollback();
+            //    string errorCode = ex.SqlState;
+            //    switch (errorCode)
+            //    {
+            //        default:
+            //            break;
+            //    }
+
+            //    throw new Exception("Det gick inte att lägga till en observation", ex);
+            //}
+
+            //try
+            //{
+            //using var command1 = new NpgsqlCommand(statement1, connection);
+            //command1.Parameters.AddWithValue("observerid", observation.ObserverId);
+            //command1.Parameters.AddWithValue("geolocationid", observation.GeolocationId);
+            //command1.Parameters.AddWithValue("date", observation.Date);
+            //command1.Parameters.AddWithValue("observationid", observation.Id);
+            //command1.ExecuteNonQuery():
+            //command1.Parameters.Clear();
+
+            //using var command2 = new NpgsqlCommand(statement2, connection);
+            //command2.Parameters.AddWithValue("observerid", observation.ObserverId);
+            //command2.Parameters.AddWithValue("geolocationid", observation.GeolocationId);
+            //command2.Parameters.AddWithValue("date", observation.Date);
+            //command2.Parameters.AddWithValue("observationid", observation.Id);
+            //command2.ExecuteNonQuery():
+            //command2.Parameters.Clear();
+
+
+
+            //    transaction.Commit();
+            //    return observation;
+
+
+            //}
+            //catch (PostgresException ex)
+            //{
+            //    string errorcode = ex.SqlState;
+            //    throw new Exception("Du, det här är fel! Skärp dig, för helvete!");
+            //}
+
         }
+
+
 
         #endregion
 
