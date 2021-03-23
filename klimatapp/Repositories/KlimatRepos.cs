@@ -3,12 +3,14 @@ using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Data;
+using System.Windows.Controls;
 
 namespace klimatapp.Repositories
 {
     public class KlimatRepos
     {
-        private static readonly string connectionString = "Server=localhost;Port=5432;Database=Klimatobservationer;User ID=yoda;Password=force;";
+        private static readonly string connectionString = "Server=localhost;Port=5432;Database=klimatapp;User ID=postgres;Password=ct9k5mVZ";
 
         #region READ
         /// <summary>
@@ -61,6 +63,7 @@ namespace klimatapp.Repositories
                     Name = (string)reader["name"],
                     CountryId = (int)reader["country_id"]
                 };
+                areas.Add(area);
             }
             return areas;
         }
@@ -113,6 +116,7 @@ namespace klimatapp.Repositories
                     Id = (int)reader["id"],
                     Name = (string)reader["name"]
                 };
+                countries.Add(country);
             }
             return countries;
         }
@@ -201,14 +205,36 @@ namespace klimatapp.Repositories
             }
             return category;
         }
+        public int FindId(string name)
+        {
+            string statement = $"select id from category where name @name";
+            using var connection = new NpgsqlConnection(connectionString);
+            connection.Open();
+            using var command = new NpgsqlCommand(statement, connection);
 
+            command.Parameters.AddWithValue("name", name);
+
+            using var reader = command.ExecuteReader();
+            Category category = null;
+            while (reader.Read())
+            {
+                category = new Category
+                {
+                    Id = (int)reader["id"],
+                    Name = (string)reader["name"],
+                    Basecategory_id = Convert.IsDBNull(reader["basecategory_id"]) ? null : (int?)reader["basecategory_id"],
+                    Unit_id = Convert.IsDBNull(reader["unit_id"]) ? null : (int?)reader["unit_id"]
+                };
+            }
+            return int id;
+        }
         /// <summary>
         /// Gets list of categories
         /// </summary>
         /// <returns>categories</returns>
         public List<Category> GetCategories()
         {
-            string statement = "select * from category";
+            string statement = "select * from category ORDER BY basecategory_id ASC, name";
             using var connection = new NpgsqlConnection(connectionString);
             connection.Open();
             using var command = new NpgsqlCommand(statement, connection);
@@ -225,6 +251,34 @@ namespace klimatapp.Repositories
                     Basecategory_id = Convert.IsDBNull(reader["basecategory_id"]) ? null : (int?)reader["basecategory_id"],
                     Unit_id = Convert.IsDBNull(reader["unit_id"]) ? null : (int?)reader["unit_id"]
                 };
+                categories.Add(category);
+            }
+            return categories;
+        }
+        /// <summary>
+        /// Gets list of categories
+        /// </summary>
+        /// <returns>categories</returns>
+        public List<Category> GetSpecificAnimal()
+        {
+            string statement = "select * from category WHERE basecategory_id BETWEEN 6 AND 8 ORDER BY basecategory_id ASC, name";
+            using var connection = new NpgsqlConnection(connectionString);
+            connection.Open();
+            using var command = new NpgsqlCommand(statement, connection);
+
+            using var reader = command.ExecuteReader();
+            Category category = null;
+            var categories = new List<Category>();
+            while (reader.Read())
+            {
+                category = new Category
+                {
+                    Id = (int)reader["id"],
+                    Name = (string)reader["name"],
+                    Basecategory_id = Convert.IsDBNull(reader["basecategory_id"]) ? null : (int?)reader["basecategory_id"],
+                    Unit_id = Convert.IsDBNull(reader["unit_id"]) ? null : (int?)reader["unit_id"]
+                };
+                categories.Add(category);
             }
             return categories;
         }
@@ -470,8 +524,9 @@ namespace klimatapp.Repositories
                 observer = new Observer
                 {
                     FirstName = (string)reader["firstname"],
-                    LastName = (string)reader["lastname"]
+                    LastName = (string)reader["lastname"],
                 };
+                observers.Add(observer);
             }
             return observers;
         }
@@ -495,7 +550,7 @@ namespace klimatapp.Repositories
                 while (reader.Read())
                 {
                     observer.Id = (int)reader["id"];
-                    observer.LastName = (string)reader["lastname"];
+                    //observer.LastName = (string)reader["lastname"];
                 }
                 return observer;
             }
@@ -570,6 +625,52 @@ namespace klimatapp.Repositories
         #region DELETE
 
 
+        #endregion
+
+        #region UI
+
+
+
+        //fillComboBox method for filling the ComboBox with Data
+        //public string fillComboBox(ComboBox cmb, string column, string model)
+        //{
+            
+        //    string statement = $"Select {column} from {model}";
+        //    try
+        //    {
+        //        using var connection = new NpgsqlConnection(connectionString);
+        //        {
+                    
+        //            connection.Open();
+        //            using var command = new NpgsqlCommand(statement, connection);
+        //            DataSet ds = new DataSet();
+        //            //connection.Open();
+        //            //using var command = new NpgsqlCommand(statement, connection);
+        //            NpgsqlDataAdapter dataAdapter = new NpgsqlDataAdapter(statement, connection);
+                   
+        //            DataTable dt = new DataTable();
+        //            dataAdapter.Fill(dt);
+        //            using var reader = command.ExecuteReader();
+        //                    while (reader.Read())
+        //                    {
+        //                        model.Id = (int)reader["id"];
+
+        //                    }
+
+        //            //Set Displaymember as Country
+        //            //cmb.DataContext = ds.Tables[0];
+        //            //cmb.DisplayMemberPath = "country";
+        //            //Set ValueMember as ID
+        //        }
+        //    }
+        //    return 
+        //    catch (PostgresException ex)
+        //    {
+        //        string errorcode = ex.SqlState;
+        //        throw new Exception("Du, det här är fel! Skärp dig, vad håller du på med!");
+        //    }
+        //}
+        //cmb_Country_SelectedIndexChanged Event
         #endregion
     }
 }

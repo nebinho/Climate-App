@@ -15,6 +15,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+
 
 namespace klimatapp
 {
@@ -24,11 +28,16 @@ namespace klimatapp
     public partial class MainWindow : Window
     {
         KlimatRepos db = new KlimatRepos();
+        Country country = new Country();
         
 
         public MainWindow()
         {
             InitializeComponent();
+            //db.fillComboBox(cmbCountry, "name", "country");
+            //cmbCountry.DisplayMemberPath = "name";
+            //cmbCountry.SelectedValuePath = "id";
+
         }
 
         private void testBtn_Click(object sender, RoutedEventArgs e)
@@ -63,13 +72,48 @@ namespace klimatapp
 
         }
 
+        private void btnAddObserver_Click(object sender, RoutedEventArgs e)
+        {
+            string fname = txbFirstName.Text;
+            string lname = txbLastName.Text;
+            Observer obs = new Observer
+            {
+                FirstName = fname,
+                LastName = lname
+            };
+            db.AddObserver(obs);
+            MessageBox.Show($"{obs.FirstName} {obs.LastName} har lagst till databasen");
+        }
+
+        private void btnViewObservers_Click(object sender, RoutedEventArgs e)
+        {
+            lbObserver.UpdateLayout();
+            lbObserver.ItemsSource = db.GetObserversByLastName();
+            
+        }
+
+        private void cmbAnimals_DropDownOpened(object sender, EventArgs e)
+        {
+            cmbAnimals.UpdateLayout();
+            cmbAnimals.ItemsSource = db.GetSpecificAnimal();
+        }
+
+        private void btnObservation_Click(object sender, RoutedEventArgs e)
+        {
+            lbObservation.UpdateLayout();
+            lbObservation.ItemsSource = (System.Collections.IEnumerable)db.GetCategory(cmbCategory.SelectedItem.ToString());
+        }
 
 
-    //    private void UpdateUI()
-    //    {
-    //        var observers = db.GetObservers();
-    //        lstTest.ItemsSource = null;
-    //        lstTest.ItemsSource = observers;
-    //    }
+
+
+
+
+        //    private void UpdateUI()
+        //    {
+        //        var observers = db.GetObservers();
+        //        lstTest.ItemsSource = null;
+        //        lstTest.ItemsSource = observers;
+        //    }
     }
 }
