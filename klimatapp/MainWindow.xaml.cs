@@ -102,16 +102,24 @@ namespace klimatapp
                 MessageBox.Show(ex.Message);
             }
         }
-
-        private void btnAdd_Click(object sender, RoutedEventArgs e)
+        private void cmbFur_DropDownOpened(object sender, EventArgs e)
         {
-            if (txbWind.Text != "")
+            if (cmbAnimals.SelectedItem.ToString() == "brown bear")
             {
-                
+                cmbFur.ItemsSource = db.GetFurs(4);
             }
+            else if (cmbAnimals.SelectedItem.ToString() == "wolf")
+            {
+                cmbFur.ItemsSource = db.GetFurs(4);
+            }
+            else if (cmbAnimals.SelectedItem.ToString() == "fox")
+            {
+                cmbFur.ItemsSource = db.GetFurs(4);
+            }
+            else
+                cmbFur.ItemsSource = "";
+            cmbFur.UpdateLayout();
         }
-
-
 
 
 
