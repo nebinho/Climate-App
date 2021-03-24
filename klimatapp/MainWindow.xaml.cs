@@ -29,11 +29,7 @@ namespace klimatapp
     {
         KlimatRepos db = new KlimatRepos();
         Country country = new Country();
-        Measurement measurement = new Measurement();
         Observer observer = new Observer();
-        Area area = new Area();
-        Category category = new Category();
-        Observation observation = new Observation();
 
         public MainWindow()
         {
@@ -62,7 +58,7 @@ namespace klimatapp
         {
             lbObserver.UpdateLayout();
             lbObserver.ItemsSource = db.GetObserversByLastName();
-
+            
         }
 
         private void cmbAnimals_DropDownOpened(object sender, EventArgs e)
@@ -97,7 +93,7 @@ namespace klimatapp
             try
             {
                 observer = db.GetObserver((Observer)lbObserver.SelectedItem);
-
+                
                 lbObservation.ItemsSource = db.GetObservations(observer);
                 lbObservation.UpdateLayout();
             }
