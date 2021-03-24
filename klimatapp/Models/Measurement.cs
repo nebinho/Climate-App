@@ -16,7 +16,7 @@ namespace klimatapp.Models
         /// <summary>
         /// Type of measurement
         /// </summary>
-        public float? Value { get; set; }
+        public double? Value { get; set; }
         /// <summary>
         /// foreign key
         /// </summary>
