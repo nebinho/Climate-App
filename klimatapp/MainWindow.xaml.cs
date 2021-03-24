@@ -30,6 +30,8 @@ namespace klimatapp
         KlimatRepos db = new KlimatRepos();
         Country country = new Country();
         Observer observer = new Observer();
+        Measurement measurement = new Measurement();
+        Observation observation = new Observation();
 
         public MainWindow()
         {
@@ -58,7 +60,7 @@ namespace klimatapp
         {
             lbObserver.UpdateLayout();
             lbObserver.ItemsSource = db.GetObserversByLastName();
-            
+
         }
 
         private void cmbAnimals_DropDownOpened(object sender, EventArgs e)
@@ -93,7 +95,7 @@ namespace klimatapp
             try
             {
                 observer = db.GetObserver((Observer)lbObserver.SelectedItem);
-                
+
                 lbObservation.ItemsSource = db.GetObservations(observer);
                 lbObservation.UpdateLayout();
             }
@@ -121,14 +123,57 @@ namespace klimatapp
             cmbFur.UpdateLayout();
         }
 
+        private void lbObservation_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            observation = (Observation)lbObservation.SelectedItem;
+            int HowMany = db.GetCategories().Count();
+            for (int i = 0; i < HowMany; i++)
+            {
+                measurement = db.GetMeasurement(observation, i);
+                if (measurement == null)
+                {
+                    if (i == 9)
+                        txbWind.Text = "";
+                    else if (i == 10)
+                        txbRain.Text = "";
+                    else if (i == 11)
+                        txbTemperature.Text = "";
+                    else
+                        txbAnimals.Text = "";
+                }
+                else
+                {
+                    if (i == 9)
+                        txbWind.Text = measurement.ToString();
+                    else if (i == 10)
+                        txbRain.Text = measurement.ToString();
+                    else if (i == 11)
+                        txbTemperature.Text = measurement.ToString();
+                    else
+                        txbAnimals.Text = measurement.ToString();
+                }
+
+            }
 
 
 
-        //    private void UpdateUI()
-        //    {
-        //        var observers = db.GetObservers();
-        //        lstTest.ItemsSource = null;
-        //        lstTest.ItemsSource = observers;
-        //    }
+            //    private void UpdateUI()
+            //    {
+            //        var observers = db.GetObservers();
+            //        lstTest.ItemsSource = null;
+            //        lstTest.ItemsSource = observers;
+            //    }
+        }
+
+        private void btnAdd_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void cmbArea_DropDownOpened(object sender, EventArgs e)
+        {
+            cmbAnimals.UpdateLayout();
+            cmbAnimals.ItemsSource = db.GetAreas();
+        }
     }
 }

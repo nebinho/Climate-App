@@ -8,7 +8,7 @@ namespace klimatapp.Repositories
 {
     public class KlimatRepos
     {
-        private static readonly string connectionString = "Server=localhost;Port=5432;Database=Klimatobservationer;User ID=yoda;Password=force;";
+        private static readonly string connectionString = "Server=localhost;Port=5432;Database=klimatapp;User ID=postgres;Password=ct9k5mVZ;";
 
         #region READ
         /// <summary>
@@ -39,31 +39,31 @@ namespace klimatapp.Repositories
             return area;
         }
 
-        ///// <summary>
-        ///// Gets a list of areas from db
-        ///// </summary>
-        ///// <returns>areas</returns>
-        //public List<Area> GetAreas()
-        //{
-        //    string statement = "select * from area";
-        //    using var connection = new NpgsqlConnection(connectionString);
-        //    connection.Open();
-        //    using var command = new NpgsqlCommand(statement, connection);
+        /// <summary>
+        /// Gets a list of areas from db
+        /// </summary>
+        /// <returns>areas</returns>
+        public List<Area> GetAreas()
+        {
+            string statement = "select * from area";
+            using var connection = new NpgsqlConnection(connectionString);
+            connection.Open();
+            using var command = new NpgsqlCommand(statement, connection);
 
-        //    using var reader = command.ExecuteReader();
-        //    Area area = null;
-        //    var areas = new List<Area>();
-        //    while (reader.Read())
-        //    {
-        //        area = new Area
-        //        {
-        //            Id = (int)reader["id"],
-        //            Name = (string)reader["name"],
-        //            CountryId = (int)reader["country_id"]
-        //        };
-        //    }
-        //    return areas;
-        //}
+            using var reader = command.ExecuteReader();
+            Area area = null;
+            var areas = new List<Area>();
+            while (reader.Read())
+            {
+                area = new Area
+                {
+                    Id = (int)reader["id"],
+                    Name = (string)reader["name"],
+                    CountryId = (int)reader["country_id"]
+                };
+            }
+            return areas;
+        }
 
         /// <summary>
         /// Gets country from db
@@ -139,7 +139,7 @@ namespace klimatapp.Repositories
                 measurement = new Measurement
                 {
                     //Value = Convert.IsDBNull(reader["value"]) ? null : (float?)reader["value"]
-                    Value = Convert.IsDBNull((float)reader.GetDouble(0)) ? null : (float?)reader.GetDouble(0)
+                    Value = Convert.IsDBNull((double)reader["value"]) ? null : (double?)reader["value"]
 
                 };
             }
@@ -541,21 +541,24 @@ namespace klimatapp.Repositories
         // Behövs datetime som indataparameter ifall man vill skriva in
         public Observation AddObservation(Observation observation, Area area)
         {
-            string statement = $"INSERT INTO observation(observerid, geolocationid, date) VALUES (@observerid, @geolocationid, @date) " +
-                $"SELECT geolocationid FROM geolocation WHERE areaid = {area.Id} RETURNING id";
+            string statement = $"INSERT INTO observation(observer_id, geolocation_id, date) VALUES (@observer_id, @geolocation_id, @date) " +
+                $"SELECT geolocation_id FROM geolocation WHERE area_id = {area.Id} RETURNING id";
             try
             {
                 using var connection = new NpgsqlConnection(connectionString);
                 connection.Open();
                 using var command = new NpgsqlCommand(statement, connection);
 
-                command.Parameters.AddWithValue("observerid", observation.ObserverId);
-                command.Parameters.AddWithValue("geolocationid", observation.GeolocationId);
+                command.Parameters.AddWithValue("observer_id", observation.ObserverId);
+                command.Parameters.AddWithValue("geolocation_id", observation.GeolocationId);
                 command.Parameters.AddWithValue("date", observation.Date);
                 using var reader = command.ExecuteReader();
                 while (reader.Read())
                 {
                     observation.Id = (int)reader["id"];
+                    observation.Date = (DateTime)reader["date"];
+                    observation.GeolocationId = (int)reader["geolocation_id"];
+                    observation.ObserverId = (int)reader["observer_id"];
                 }
                 return observation;
             }
@@ -568,8 +571,8 @@ namespace klimatapp.Repositories
 
         public Measurement AddMeasurement(Measurement measurement, Observation observation, Category category)
         {
-            string statement = $"INSERT INTO measurement(value, observationid, categoryid) VALUES(@value, @observationid, @categoryid) " +
-                $"SELECT observationid, categoryid FROM observation, category WHERE observationid = {observation.Id}, categoryid = {category.Id} RETURNING id";
+            string statement = $"INSERT INTO measurement(value, observation_id, category_id) VALUES(@value, @observation_id, @category_id) " +
+                $"SELECT observation_id, category_id FROM observation, category WHERE observation_id = {observation.Id}, category_id = {category.Id} RETURNING id";
             try
             {
                 using var connection = new NpgsqlConnection(connectionString);
@@ -577,16 +580,56 @@ namespace klimatapp.Repositories
                 using var command = new NpgsqlCommand(statement, connection);
 
                 command.Parameters.AddWithValue("value", measurement.Value ?? Convert.DBNull);
-                command.Parameters.AddWithValue("observationid", measurement.Observation_id);
-                command.Parameters.AddWithValue("categoryid", measurement.Category_id);
+                command.Parameters.AddWithValue("observation_id", measurement.Observation_id);
+                command.Parameters.AddWithValue("category_id", measurement.Category_id);
 
                 using var reader = command.ExecuteReader();
                 while (reader.Read())
                 {
                     measurement.Id = (int)reader["id"];
+                    measurement.Value = Convert.IsDBNull((double)reader["value"]) ? null : (double?)reader["value"];
+                    measurement.Observation_id = (int)reader["observation_id"];
+                    measurement.Category_id = (int)reader["category_id"];
                 }
 
                 return measurement;
+            }
+            catch (PostgresException ex)
+            {
+                string errorcode = ex.SqlState;
+                throw new Exception("Du det här är fel! Du måste välja en kategori för mätpunkten!", ex);
+            }
+
+        }
+        public void AddObservationMulti(Observation observation, List<Measurement> measurements, string obs, string meas)
+        {
+            string stmt1 = "BEGIN:";
+            string stmt2 = "COMMIT:";
+            string statementFull = $"{stmt1} {obs} {meas} {stmt2}";
+            using var connection = new NpgsqlConnection(connectionString);
+            connection.Open();
+
+            Measurement measurement = new Measurement();
+            var transaction = connection.BeginTransaction();
+            using var cmd = new NpgsqlCommand(statementFull, connection);
+            try
+            {
+                using var reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    observation.Id = (int)reader["id"];
+                    observation.Date = (DateTime)reader["date"];
+                    observation.GeolocationId = (int)reader["geolocation_id"];
+                    observation.ObserverId = (int)reader["observer_id"];
+
+                    measurement.Id = (int)reader["id"];
+                    measurement.Value = Convert.IsDBNull((double)reader["value"]) ? null : (double?)reader["value"];
+                    measurement.Observation_id = (int)reader["observation_id"];
+                    measurement.Category_id = (int)reader["category_id"];
+                }
+                    transaction.Commit();
+                
+
             }
             catch (PostgresException ex)
             {

@@ -39,7 +39,7 @@
         <Label x:Name="lblAnimalsMeasurement" Content="amt" HorizontalAlignment="Left" Margin="537,267,0,0" VerticalAlignment="Top" Width="29"/>
         <CheckBox x:Name="cbIsAnimals" Content="" HorizontalAlignment="Left" Margin="571,273,0,0" VerticalAlignment="Top"/>
         <Label x:Name="lblAnimals" Content="Animals" HorizontalAlignment="Left" Margin="482,241,0,0" VerticalAlignment="Top"/>
-        <Button x:Name="btnAdd" Content="Add Observation" HorizontalAlignment="Left" Margin="633,163,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="btnAdd" Content="Add Observation" HorizontalAlignment="Left" Margin="633,163,0,0" VerticalAlignment="Top" Click="btnAdd_Click"/>
         <Button x:Name="btnChange"  Content="Change" HorizontalAlignment="Left" Margin="537,298,0,0" VerticalAlignment="Top"/>
         <Button x:Name="btnRemove" Content="Remove" HorizontalAlignment="Left" Margin="603,298,0,0" VerticalAlignment="Top"/>
         <ComboBox x:Name="cmbAnimals" HorizontalAlignment="Left" Margin="539,245,0,0" VerticalAlignment="Top" Width="120" DropDownOpened="cmbAnimals_DropDownOpened"/>
@@ -48,6 +48,8 @@
         <Label x:Name="lblDate" Content="Date" HorizontalAlignment="Left" Margin="633,101,0,0" VerticalAlignment="Top"/>
         <ComboBox x:Name="cmbFur" HorizontalAlignment="Left" Margin="670,245,0,0" VerticalAlignment="Top" Width="120" DropDownOpened="cmbFur_DropDownOpened" />
         <Label x:Name="lblFur" Content="Fur" HorizontalAlignment="Left" Margin="670,214,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="cmbArea" HorizontalAlignment="Left" Margin="633,74,0,0" VerticalAlignment="Top" Width="120" DropDownOpened="cmbArea_DropDownOpened"/>
+        <Label x:Name="lblArea" Content="Area" HorizontalAlignment="Left" Margin="633,43,0,0" VerticalAlignment="Top"/>
 
     </Grid>
 </Window>
