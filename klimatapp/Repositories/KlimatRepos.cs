@@ -8,7 +8,7 @@ namespace klimatapp.Repositories
 {
     public class KlimatRepos
     {
-        private static readonly string connectionString = "Server=localhost;Port=5432;Database=klimatapp;User ID=postgres;Password=ct9k5mVZ;";
+        private static readonly string connectionString = "Server=localhost;Port=5432;Database=Klimatobservationer;User ID=yoda;Password=force;";
 
         #region READ
         /// <summary>
