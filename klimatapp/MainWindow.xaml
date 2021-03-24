@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <ListBox x:Name="lbObservation" HorizontalAlignment="Center" Height="279" Margin="0,39,0,0" VerticalAlignment="Top" Width="152" ItemStringFormat='yyyy-MM-dd HH:mm:ss' />
+        <ListBox x:Name="lbObservation" HorizontalAlignment="Center" Height="279" Margin="0,39,0,0" VerticalAlignment="Top" Width="152" ItemStringFormat='yyyy-MM-dd HH:mm:ss' MouseDoubleClick="lbObservation_MouseDoubleClick" />
         <Label x:Name="lblFirstName"  Content="First Name" HorizontalAlignment="Left" Margin="9,316,0,0" VerticalAlignment="Top"/>
         <Label x:Name="lblLastName" Content="Last Name" HorizontalAlignment="Left" Margin="150,316,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="txbFirstName" HorizontalAlignment="Left" Margin="9,347,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>

@@ -122,25 +122,25 @@ namespace klimatapp.Repositories
         /// </summary>
         /// <param value="id"></param>
         /// <returns>measurement</returns>
-        public Measurement GetMeasurement(int id)
+        public Measurement GetMeasurement(Observation observation, int id)
         {
-            string statement = "select * from measurement where id = @id";
+            string statement = $"select value from measurement where observation_id = {observation.Id} AND category_id = {id}";
             using var connection = new NpgsqlConnection(connectionString);
             connection.Open();
             using var command = new NpgsqlCommand(statement, connection);
 
-            command.Parameters.AddWithValue("id", id);
+            //command.Parameters.AddWithValue();
 
             using var reader = command.ExecuteReader();
             Measurement measurement = null;
+            //string value = null;
             while (reader.Read())
             {
                 measurement = new Measurement
                 {
-                    Id = (int)reader["id"],
-                    Value = Convert.IsDBNull(reader["value"]) ? null : (float?)reader["value"],
-                    Observation_id = (int)reader["observation_id"],
-                    Category_id = (int)reader["category_id"]
+                    //Value = Convert.IsDBNull(reader["value"]) ? null : (float?)reader["value"]
+                    Value = Convert.IsDBNull((float)reader.GetDouble(0)) ? null : (float?)reader.GetDouble(0)
+
                 };
             }
             return measurement;
@@ -375,7 +375,7 @@ namespace klimatapp.Repositories
         /// <returns>observations</returns>
         public List<Observation> GetObservations(Observer observer)
         {
-            string statement = $"select date from observation WHERE observer_id = {observer.Id}";
+            string statement = $"select * from observation WHERE observer_id = {observer.Id}";
             using var connection = new NpgsqlConnection(connectionString);
             connection.Open();
             using var command = new NpgsqlCommand(statement, connection);
@@ -387,10 +387,10 @@ namespace klimatapp.Repositories
             {
                 observation = new Observation
                 {
-                    //Id = (int)reader["id"],
-                    Date = reader.GetFieldValue<DateTime>(reader.GetOrdinal("date"))
-                    //ObserverId = (int)reader["observer_id"],
-                    //GeolocationId = (int)reader["geolocation_id"]
+                    Id = (int)reader["id"],
+                    Date = reader.GetFieldValue<DateTime>(reader.GetOrdinal("date")),
+                    ObserverId = (int)reader["observer_id"],
+                    GeolocationId = (int)reader["geolocation_id"]
                 };
                 observations.Add(observation);
             }
@@ -459,7 +459,7 @@ namespace klimatapp.Repositories
         /// <returns>observers</returns>
         public List<Observer> GetObserversByLastName()
         {
-            string statement = $"SELECT firstname, lastname FROM observer ORDER BY lastname";
+            string statement = $"SELECT * FROM observer ORDER BY lastname";
 
 
             using var connection = new NpgsqlConnection(connectionString);
@@ -473,6 +473,7 @@ namespace klimatapp.Repositories
             {
                 observer = new Observer
                 {
+                    Id = (int)reader["id"],
                     FirstName = (string)reader["firstname"],
                     LastName = (string)reader["lastname"]
                 };
@@ -525,7 +526,6 @@ namespace klimatapp.Repositories
                 while (reader.Read())
                 {
                     observer.Id = (int)reader["id"];
-                    observer.LastName = (string)reader["lastname"];
                 }
                 
                 return observer;
