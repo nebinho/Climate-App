@@ -8,7 +8,7 @@ namespace klimatapp.Repositories
 {
     public class KlimatRepos
     {
-        private static readonly string connectionString = "Server=localhost;Port=5432;Database=Klimatobservationer;User ID=yoda;Password=force;";
+        private static readonly string connectionString = "Server=localhost;Port=5432;Database=klimatapp;User ID=postgres;Password=ct9k5mVZ;";
 
         #region READ
         /// <summary>
@@ -599,7 +599,7 @@ namespace klimatapp.Repositories
 
         public Observation AddObservationWithMultipleValues(Observation observation, Measurement measurement, Category category, Area area)
         {
-            string stmt1 = "BEGIN TRANSACTION INSERT INTO observation(observerid, geolocationid, date) VALUES (@observerid, @geolocationid, @date) RETURNING id";
+            string stmt1 = "INSERT INTO observation(observerid, geolocationid, date) VALUES (@observerid, @geolocationid, @date) RETURNING id";
             string stmt2 = "INSERT INTO measurement(value, observationid, categoryid) VALUES (@value, @observationid, @categoryid) RETURNING id";
 
             using var connection = new NpgsqlConnection(connectionString);
