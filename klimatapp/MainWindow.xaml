@@ -5,9 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:klimatapp"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="900">
     <Grid>
-        <ListBox x:Name="lbObservation" HorizontalAlignment="Center" Height="279" Margin="0,39,0,0" VerticalAlignment="Top" Width="152" ItemStringFormat='yyyy-MM-dd HH:mm:ss' MouseDoubleClick="lbObservation_MouseDoubleClick" />
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="763*"/>
+            <ColumnDefinition Width="37*"/>
+        </Grid.ColumnDefinitions>
+        <ListBox x:Name="lbObservation" HorizontalAlignment="Left" Height="279" Margin="324,39,0,0" VerticalAlignment="Top" Width="152" ItemStringFormat='yyyy-MM-dd HH:mm:ss' MouseDoubleClick="lbObservation_MouseDoubleClick" />
         <Label x:Name="lblFirstName"  Content="First Name" HorizontalAlignment="Left" Margin="9,316,0,0" VerticalAlignment="Top"/>
         <Label x:Name="lblLastName" Content="Last Name" HorizontalAlignment="Left" Margin="150,316,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="txbFirstName" HorizontalAlignment="Left" Margin="9,347,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
@@ -15,41 +19,38 @@
         <ListBox x:Name="lbObserver" HorizontalAlignment="Left" Height="279" Margin="11,41,0,0" VerticalAlignment="Top" Width="152"/>
         <Label x:Name="lblObserver" Content="Observer" HorizontalAlignment="Left" Margin="11,10,0,0" VerticalAlignment="Top"/>
         <Label x:Name="lblObservation" Content="Observation" HorizontalAlignment="Left" Margin="325,8,0,0" VerticalAlignment="Top"/>
-        <Button x:Name="btnObservation" Content="Observations" HorizontalAlignment="Left" Margin="227,154,0,0" VerticalAlignment="Top" Click="btnObservation_Click"/>
+        <Button x:Name="btnObservation" Content="Observations" HorizontalAlignment="Left" Margin="211,78,0,0" VerticalAlignment="Top" Click="btnObservation_Click"/>
         <Button x:Name="btnAddObserver" Content="Add Observer" HorizontalAlignment="Left" Margin="9,381,0,0" VerticalAlignment="Top" Click="btnAddObserver_Click"/>
         <Button x:Name="btnViewObservers" Content="View Observers" HorizontalAlignment="Left" Margin="97,381,0,0" VerticalAlignment="Top" Click="btnViewObservers_Click"/>
         <Button x:Name="btnDeleteObserver" Content="Delete Observer" HorizontalAlignment="Left" Margin="199,381,0,0" VerticalAlignment="Top" Click="btnDeleteObserver_Click"/>
         <TextBox x:Name="txbWind" HorizontalAlignment="Left" Margin="482,64,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="50" Height="16"/>
         <Label x:Name="lblWindMeasurement" Content="m/s" HorizontalAlignment="Left" Margin="537,59,0,0" VerticalAlignment="Top" Width="29"/>
-        <CheckBox x:Name="IsWind" Content="" HorizontalAlignment="Left" Margin="571,65,0,0" VerticalAlignment="Top"/>
         <Label x:Name="lblWind" Content="Wind" HorizontalAlignment="Left" Margin="482,33,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="txbRain" HorizontalAlignment="Left" Margin="482,116,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="50" Height="16"/>
         <Label x:Name="lblRainMeasurement" Content="mm" HorizontalAlignment="Left" Margin="537,111,0,0" VerticalAlignment="Top" Width="29"/>
-        <CheckBox x:Name="cbIsRain" Content="" HorizontalAlignment="Left" Margin="571,117,0,0" VerticalAlignment="Top"/>
         <Label x:Name="lblRain" Content="Rain" HorizontalAlignment="Left" Margin="482,85,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="txbTemperature" HorizontalAlignment="Left" Margin="482,168,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="50" Height="16"/>
         <Label x:Name="lblTemperatureMeasurement" Content="°C" HorizontalAlignment="Left" Margin="537,163,0,0" VerticalAlignment="Top" Width="29"/>
-        <CheckBox x:Name="cbIsTemperature" Content="" HorizontalAlignment="Left" Margin="571,169,0,0" VerticalAlignment="Top"/>
         <Label x:Name="lblTemperature" Content="Temperature" HorizontalAlignment="Left" Margin="482,137,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="txbSnow" HorizontalAlignment="Left" Margin="482,220,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="50" Height="16"/>
         <Label x:Name="lblSnowMeasurement" Content="cm" HorizontalAlignment="Left" Margin="537,215,0,0" VerticalAlignment="Top" Width="29"/>
-        <CheckBox x:Name="cbIsSnow" Content="" HorizontalAlignment="Left" Margin="571,221,0,0" VerticalAlignment="Top"/>
         <Label x:Name="lblSnow" Content="Snow" HorizontalAlignment="Left" Margin="482,189,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="txbAnimals" HorizontalAlignment="Left" Margin="482,272,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="50" Height="16"/>
         <Label x:Name="lblAnimalsMeasurement" Content="amt" HorizontalAlignment="Left" Margin="537,267,0,0" VerticalAlignment="Top" Width="29"/>
-        <CheckBox x:Name="cbIsAnimals" Content="" HorizontalAlignment="Left" Margin="571,273,0,0" VerticalAlignment="Top"/>
         <Label x:Name="lblAnimals" Content="Animals" HorizontalAlignment="Left" Margin="482,241,0,0" VerticalAlignment="Top"/>
-        <Button x:Name="btnAdd" Content="Add Observation" HorizontalAlignment="Left" Margin="633,163,0,0" VerticalAlignment="Top" Click="btnAdd_Click"/>
-        <Button x:Name="btnChange"  Content="Change" HorizontalAlignment="Left" Margin="537,298,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="btnAdd" Content="Add Observation" HorizontalAlignment="Left" Margin="183,232,0,0" VerticalAlignment="Top" Click="btnAdd_Click"/>
+        <Button x:Name="btnUpdate"  Content="Update" HorizontalAlignment="Left" Margin="537,298,0,0" VerticalAlignment="Top" Click="btnUpdate_Click"/>
         <Button x:Name="btnRemove" Content="Remove" HorizontalAlignment="Left" Margin="603,298,0,0" VerticalAlignment="Top"/>
         <ComboBox x:Name="cmbAnimals" HorizontalAlignment="Left" Margin="539,245,0,0" VerticalAlignment="Top" Width="120" DropDownOpened="cmbAnimals_DropDownOpened"/>
-        <Label x:Name="lblIsChecked" Content="Alter" HorizontalAlignment="Left" Margin="562,33,0,0" VerticalAlignment="Top"/>
-        <TextBox xmlns:sys="clr-namespace:System;assembly=mscorlib" x:Name="txbDate" HorizontalAlignment="Left" Margin="633,132,0,0" Text="{Binding Source={x:Static sys:DateTime.Now}, Mode=OneWay,  StringFormat='yyyy-MM-dd'}" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <Label x:Name="lblDate" Content="Date" HorizontalAlignment="Left" Margin="633,101,0,0" VerticalAlignment="Top"/>
-        <ComboBox x:Name="cmbFur" HorizontalAlignment="Left" Margin="670,245,0,0" VerticalAlignment="Top" Width="120" DropDownOpened="cmbFur_DropDownOpened" />
+        <TextBox xmlns:sys="clr-namespace:System;assembly=mscorlib" x:Name="txbDate" HorizontalAlignment="Left" Margin="183,201,0,0" Text="{Binding Source={x:Static sys:DateTime.Now}, Mode=OneWay,  StringFormat='yyyy-MM-dd'}" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <Label x:Name="lblDate" Content="Date" HorizontalAlignment="Left" Margin="183,170,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="cmbFur" HorizontalAlignment="Left" Margin="670,245,0,0" VerticalAlignment="Top" Width="120" DropDownOpened="cmbFur_DropDownOpened" Grid.ColumnSpan="2" />
         <Label x:Name="lblFur" Content="Fur" HorizontalAlignment="Left" Margin="670,214,0,0" VerticalAlignment="Top"/>
-        <ComboBox x:Name="cmbArea" HorizontalAlignment="Left" Margin="633,74,0,0" VerticalAlignment="Top" Width="120" DropDownOpened="cmbArea_DropDownOpened"/>
-        <Label x:Name="lblArea" Content="Area" HorizontalAlignment="Left" Margin="633,43,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="cmbArea" HorizontalAlignment="Left" Margin="183,143,0,0" VerticalAlignment="Top" Width="120" DropDownOpened="cmbArea_DropDownOpened"/>
+        <Label x:Name="lblArea" Content="Area" HorizontalAlignment="Left" Margin="183,112,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="btnAddMeasure" Content="Add" HorizontalAlignment="Left" Margin="488,298,0,0" VerticalAlignment="Top" Click="btnAddMeasure_Click"/>
+        <Label x:Name="lblAnimalsCounted" Content="Animals Counted" HorizontalAlignment="Left" Margin="668,28,0,0" VerticalAlignment="Top"/>
+        <ListBox x:Name="lbAnimalsCounted" Margin="603,59,25,225"/>
 
     </Grid>
 </Window>
