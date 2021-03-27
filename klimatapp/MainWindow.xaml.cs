@@ -34,6 +34,7 @@ namespace klimatapp
         Observation observation = new Observation();
         Area area = new Area();
         Category category;
+        
 
         public MainWindow()
         {
@@ -42,7 +43,7 @@ namespace klimatapp
 
         #region READ
         /// <summary>
-        /// Get a list of all observers
+        /// Lägger till Observers i Observers listann.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -50,11 +51,10 @@ namespace klimatapp
         {
             lbObserver.UpdateLayout();
             lbObserver.ItemsSource = db.GetObserversByLastName();
-
         }
 
         /// <summary>
-        /// Get list of all animals within Category.
+        /// Lägger till Animals i combobox
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -65,11 +65,11 @@ namespace klimatapp
         }
 
         /// <summary>
-        /// Gets observations made by observer, viewed as date of observation.
+        /// Hämtar Observation av den Observer som är dubbel tryckt
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void btnObservation_Click(object sender, RoutedEventArgs e)
+        private void lbObserver_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             try
             {
@@ -78,16 +78,14 @@ namespace klimatapp
                 observer = db.GetObserver((Observer)lbObserver.SelectedItem);
                 lbObservation.ItemsSource = db.GetObservations(observer);
                 lbObservation.UpdateLayout();
-
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
         }
-
         /// <summary>
-        /// Gets fur for animals in category. Only animals with fur shown.
+        /// Hämtar fur för animals som har fur.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -99,11 +97,11 @@ namespace klimatapp
             }
             else if (cmbAnimals.SelectedItem.ToString() == "wolf")
             {
-                cmbFur.ItemsSource = db.GetFurs(4);
+                cmbFur.ItemsSource = db.GetFurs(12);
             }
             else if (cmbAnimals.SelectedItem.ToString() == "fox")
             {
-                cmbFur.ItemsSource = db.GetFurs(4);
+                cmbFur.ItemsSource = db.GetFurs(40);
             }
             else
                 cmbFur.ItemsSource = "";
@@ -111,76 +109,70 @@ namespace klimatapp
         }
 
         /// <summary>
-        /// Gets measurements made in observation.
+        /// Hämtar measurements från Observation som är dubbel tryckt.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void lbObservation_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            observation = (Observation)lbObservation.SelectedItem;
-            List<int> nrId = new List<int>();
-            List<Category> categories = new List<Category>();
-            List<Measurement> amount = new List<Measurement>();
-            List<Category> animals = new List<Category>();
-            categories = db.GetCategories();
-            foreach (Category id in categories)
+            txbAnimals.Text = ""; // börjar med att rensa från alla textbox.
+            txbRain.Text = "";
+            txbSnow.Text = "";
+            txbTemperature.Text = "";
+            txbWind.Text = "";
+            lbAnimalsCounted.ItemsSource = null; //rensar också Animals counted listann och comboboxen med animals.
+            cmbAnimals.ItemsSource = null;
+            cmbFur.ItemsSource = null;
+            List<string> showMeAnimals = new List<string>(); //lista av strings som visar animals i Animals Counted
+            List<Measurement> measurements = db.GetMeasurements((Observation)lbObservation.SelectedItem); 
+            //hämtar measurements beroende av vilken observation är valt.
+            foreach(var meas in measurements) //kollar alla measurements i listan.
             {
-                nrId.Add(id.Id);
-            }
-            for (int i = 0; i < nrId.Count(); i++)
-            {
-                measurement = db.GetMeasurement(observation, nrId[i]);
-                if (measurement == null)
+                if (meas.Category_id == 9) //först kollar om det är väder.
                 {
-                    if (nrId[i] == 9)
-                        txbWind.Text = "";
-                    else if (nrId[i] == 10)
-                        txbRain.Text = "";
-                    else if (nrId[i] == 11)
-                        txbTemperature.Text = "";
-                    else if (nrId[i] == 73)
-                        txbSnow.Text = "";
-                    else
-                        txbAnimals.Text = "";
+                    txbWind.Text = meas.Value.ToString();
                 }
-                else
+                else if (meas.Category_id == 10)
                 {
-                    if (nrId[i] == 9)
-                        txbWind.Text = measurement.ToString();
-                    if (nrId[i] == 10)
-                        txbRain.Text = measurement.ToString();
-                    if (nrId[i] == 11)
-                        txbTemperature.Text = measurement.ToString();
-                    if (nrId[i] == 73)
-                        txbSnow.Text = measurement.ToString();
-                    foreach (Category ani in db.GetAnimalCategories())
+                    txbRain.Text = meas.Value.ToString();
+                }
+                else if (meas.Category_id == 11)
+                {
+                    txbTemperature.Text = meas.Value.ToString();
+                }
+                else if (meas.Category_id == 73)
+                {
+                    txbSnow.Text = meas.Value.ToString();
+                }
+                else //här kollar för animals.
+                {
+                    if (db.GetAnimal(meas.Category_id) != null)
                     {
-                        if (nrId[i] == ani.Id)
-                        {
-                            amount.Add(measurement);
-                            Category animal = db.GetAnimal(nrId[i]);
-                            animals.Add(animal);
-                            
-                        }
-                        int howMany = animals.Count();
-                        List<string> bindtoListView = new List<string>();
-                        for (int x = 0; x < howMany; x++)
-                        {
-                            string first = animals[x].Name.ToString();
-                            string last = amount[x].Value.ToString();
-                            bindtoListView.Add($"{first} {last}");
-                        }
-                        lbAnimalsCounted.ItemsSource = bindtoListView;
-
-
+                        Category animal = (Category)db.GetAnimal(meas.Category_id); //hämta animal från measurement.
+                        string one = animal.Name.ToString(); //skapa string som läggs i string listann.
+                        string two = meas.Value.ToString();
+                        string final = $"{one} {two}";
+                        showMeAnimals.Add(final);
+                    }
+                    else if (db.GetFurForAnimal(meas.Category_id) != null) //om det är animal med fur då först kolla fur...
+                    {
+                        Category fur = (Category)db.GetFurForAnimal(meas.Category_id); //...lägga till den i category...
+                        Category animal = (Category)db.GetAnimal((int)fur.Basecategory_id); //... och animal hittad baserad på fur.
+                        string one = animal.Name.ToString(); //igen, skapa strings och lägga i string lista.
+                        string two = fur.Name.ToString();
+                        string three = meas.Value.ToString();
+                        string final = $"{one} {two} {three}";
+                        showMeAnimals.Add(final);
                     }
                 }
+
             }
-            
+            lbAnimalsCounted.ItemsSource = showMeAnimals; //göra string listann till source för listbox.
+
         }
 
         /// <summary>
-        /// Gets list of areas.
+        /// Hämta Areas för combobox
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -195,57 +187,88 @@ namespace klimatapp
 
         #region CREATE
         /// <summary>
-        /// write in textbox first name, last name, add an observer.
+        /// skriva i textbox first name last name, lägga till observer.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void btnAddObserver_Click(object sender, RoutedEventArgs e)
         {
+            if (txbFirstName.Text == "" || txbLastName.Text == "") //kolla om det finns något i textboxen.
+            {
+                MessageBox.Show("Måste fylla i first name och last name");
+                return;
+            }
             string fname = txbFirstName.Text;
             string lname = txbLastName.Text;
-            Observer obs = new Observer
+            Observer obs = new Observer //skapa det som observer
             {
                 FirstName = fname,
                 LastName = lname
             };
-            db.AddObserver(obs);
+            db.AddObserver(obs); //lägga till i db.
             MessageBox.Show($"{obs.FirstName} {obs.LastName} har lagst till databasen");
         }
 
         /// <summary>
-        /// Adds new observation to chosen observer.
+        /// lägger till en ny observation till observer som är valt.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void btnAdd_Click(object sender, RoutedEventArgs e)
         {
-            Geolocation geolocation = new Geolocation();
-            area = (Area)cmbArea.SelectedItem;
-            int usethis = area.Id;
-            geolocation = db.GetGeolocation(usethis);
-            observation = db.AddObservation(geolocation, (Observer)lbObserver.SelectedItem, txbDate.Text);
+            try
+            {
+                if (lbObserver.SelectedItem == null) //kolla om det är någon observer valt
+                {
+                    MessageBox.Show("Välj områd som observationen gjordes i");
+                    return;
+                }
+                if (cmbArea.SelectedItem == null) //kolla om det är något områd valt
+                {
+                    MessageBox.Show("Välj områd som observationen gjordes i");
+                    return;
+                }
+                if (txbDate.Text == "") //kolla om det finns datum
+                {
+                    MessageBox.Show("måste lägga till datum");
+                    return;
+                }
+                Geolocation geolocation;
+                area = (Area)cmbArea.SelectedItem; //lägga till utifrån combobox
+                int usethis = area.Id; // använda id från area till att hitta geolocation för observation.geolocation_id i databasen
+                geolocation = db.GetGeolocation(usethis);
+                observation = db.AddObservation(geolocation, (Observer)lbObserver.SelectedItem, txbDate.Text);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         /// <summary>
-        /// Adds measurements to chosen observation by filling textboxes
+        /// Lägga till measurements till databasen till observationen valt baserad på textboxen.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void btnAddMeasure_Click(object sender, RoutedEventArgs e)
         {
-
-            List<Measurement> measurements = new List<Measurement>();
-
-            if (txbWind.Text != "")
+            if(lbObservation.SelectedItem == null)
             {
-                measurement = new Measurement();
-                category = new Category();
-                category = db.GetCategory(9);
-                measurement.Category_id = category.Id;
-                measurement.Value = double.Parse(txbWind.Text);
-                measurements.Add(measurement);
+                MessageBox.Show("måste välja observation till att lägga measurement till.");
+                return;
             }
-            if (txbRain.Text != "")
+            List<Measurement> measurements = new List<Measurement>(); //här läggs till measurements innan databasen
+
+            if (txbWind.Text != "") //kolla om textboxen är toma.
+            {
+                measurement = new Measurement(); 
+                category = new Category();
+                category = db.GetCategory(9); //först hämta category från db baserad på vilken textbox.
+                measurement.Category_id = category.Id; //category läggs till i measurement.
+                measurement.Value = double.Parse(txbWind.Text); // ändra text till double.
+                measurements.Add(measurement); //lägga till measurement.
+            }
+            if (txbRain.Text != "") //repeat från första
             {
                 measurement = new Measurement();
                 category = new Category();
@@ -255,7 +278,7 @@ namespace klimatapp
                 measurements.Add(measurement);
 
             }
-            if (txbTemperature.Text != "")
+            if (txbTemperature.Text != "") //repeat från första
             {
                 measurement = new Measurement();
                 category = new Category();
@@ -265,7 +288,7 @@ namespace klimatapp
                 measurements.Add(measurement);
 
             }
-            if (txbSnow.Text != "")
+            if (txbSnow.Text != "") //repeat från första
             {
                 measurement = new Measurement();
                 category = new Category();
@@ -277,30 +300,33 @@ namespace klimatapp
             }
             if (txbAnimals.Text != "")
             {
-                measurement = new Measurement();
-                category = new Category();
-                category = (Category)cmbAnimals.SelectedItem;
-                if (cmbFur.SelectedItem != null)
+                if (cmbFur.SelectedItem != null) //kolla först om det är animal
                 {
                     measurement = new Measurement();
-                    Category cate = new Category();
-                    cate = (Category)cmbFur.SelectedItem;
+                    category = new Category();
+                    category = (Category)cmbFur.SelectedItem; //measurement läggs till i category som är fur
+                    measurement.Value = double.Parse(txbAnimals.Text);
                     measurement.Category_id = category.Id;
                     measurements.Add(measurement);
                 }
-                measurement.Category_id = category.Id;
-                measurement.Value = double.Parse(txbAnimals.Text);
-                measurements.Add(measurement);
+                else
+                {
+                    category = new Category();
+                    category = (Category)cmbAnimals.SelectedItem; //ingen fur, measurement läggs till animal
+                    measurement = new Measurement();
+                    measurement.Category_id = category.Id;
+                    measurement.Value = double.Parse(txbAnimals.Text);
+                    measurements.Add(measurement);
+                }
 
             }
-
-            db.AddMultipleMeasurementValues(measurements, (Observation)lbObservation.SelectedItem);
+            db.AddMultipleMeasurementValues(measurements, (Observation)lbObservation.SelectedItem); //läggs till i databasen
         }
         #endregion
 
         #region Delete
         /// <summary>
-        /// Delete an observer (ATTENTION! Cannot be removed if observer has done observation!)
+        /// Radera observer. OBS! Kan inte radera om det finns observation
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -308,10 +334,16 @@ namespace klimatapp
         {
             try
             {
+                if (lbObserver.SelectedItem == null)
+                {
+                    MessageBox.Show("Någon observer måste välja till att radera");
+                    return;
+                }
                 observer = (Observer)lbObserver.SelectedItem;
-                db.DeleteObserver(observer);
+                db.DeleteObserver(observer); //här gör det försök att radera från databasen
                 lbObserver.UpdateLayout();
-                lbObserver.ItemsSource = db.GetObserversByLastName();
+                lbObserver.ItemsSource = null;
+                lbObserver.ItemsSource = db.GetObserversByLastName(); //visa nya observer listann.
             }
             catch (Exception ex)
             {
@@ -325,24 +357,27 @@ namespace klimatapp
         #region Update
 
         /// <summary>
-        /// Updates measurements to chosen observation. Only overrides current measurements.
+        /// Updatera measurements till observationen som är valt
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
-            List<Measurement> measurements = new List<Measurement>();
+            if (lbObservation == null)
+                MessageBox.Show("måste välja observation var du vill ändra measurements");
+            List<Measurement> measurements;
             List<Measurement> measurements1 = new List<Measurement>();
+            
 
-            measurements = db.GetMeasurements((Observation)lbObservation.SelectedItem);
+            measurements = db.GetMeasurements((Observation)lbObservation.SelectedItem); //hämtar measurements från database
 
             foreach (var measurement in measurements)
             {
 
-                if (measurement.Category_id == 9 && txbWind.Text != measurement.Value.ToString())
+                if (measurement.Category_id == 9 && txbWind.Text != measurement.Value.ToString()) //kolla om det finns något nytt
                 {
                     
-                    measurement.Value = double.Parse(txbWind.Text);
+                    measurement.Value = double.Parse(txbWind.Text); //ändra text till double och lägga till ny lista
                     measurements1.Add(measurement);
                 }
                 if (measurement.Category_id == 10 && txbRain.Text != measurement.Value.ToString())
@@ -363,10 +398,26 @@ namespace klimatapp
                     measurement.Value = double.Parse(txbSnow.Text);
                     measurements1.Add(measurement);
                 }
+                if (cmbAnimals.SelectedItem == (Measurement)cmbAnimals.SelectedItem && txbAnimals.Text != measurement.ToString())
+                {
+                    measurement.Value = double.Parse(txbAnimals.Text);
+                    measurements1.Add(measurement);
+
+                    if (cmbFur.SelectedItem != (Measurement)cmbFur.SelectedItem) //kollar med fur och bestämmer utifrån comboboxen.
+                    {
+                        category = new Category();
+                        category = (Category)cmbFur.SelectedItem;
+                        measurement.Category_id = category.Id;
+                        measurements1.Add(measurement);
+                    }
+                }
 
             }
-            db.UpdateMeasurementValues(measurements1);
+            db.UpdateMeasurementValues(measurements1); //updaterad med nya listan.
         }
         #endregion
+
+
     }
 }
+
