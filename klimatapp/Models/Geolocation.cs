@@ -16,11 +16,11 @@ namespace klimatapp.Models
         /// <summary>
         /// Latitude (null allowed)
         /// </summary>
-        public int? Latitude { get; set; }
+        public double? Latitude { get; set; }
         /// <summary>
         /// Longitude (null allowed)
         /// </summary>
-        public int? Longitude { get; set; }
+        public double? Longitude { get; set; }
         /// <summary>
         /// Foreign key from Area
         /// </summary>
